@@ -1,7 +1,8 @@
 # 02 — Build Sequence
 
-> **Pre-condition:** `01-system-design.md` must be approved before Step 1.
-> **How this works:** Work through phases in order. Each step tells you the GHL location and what the system design specifies to build there. Mark `[x]` when done. Mark `[SKIP]` with a reason if skipping. After each step, AI will confirm what's next and what's now unlocked.
+> **Pre-condition:** `system-design_[snapshot-name].md` must be ✅ APPROVED before Step 1.
+> **How this works:** Work through phases in order. Each step tells you the GHL location and what the system design specifies to build there. Mark `[x]` when done. Mark `[SKIP]` with a reason if skipping.
+> **After every step:** AI marks it complete, gives a one-line summary of what was built, then asks: *"Shall I proceed with Step [X+1]: [Step Name]?"* — and waits. AI never auto-continues.
 
 ---
 
@@ -11,7 +12,8 @@
 Snapshot Name:    [from system design]
 Industry:         [from system design]
 Complexity:       [Simple / Medium / Full]
-Snapshot Folder:  snapshots/[name]/
+Snapshot Folder:  [path provided by human]
+System Design:    system-design_[snapshot-name].md
 Started:          [date]
 Last Updated:     [date]
 ```

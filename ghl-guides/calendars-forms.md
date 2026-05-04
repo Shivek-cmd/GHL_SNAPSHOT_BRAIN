@@ -126,6 +126,139 @@ Each calendar can have its own workflow connection — configure this in the cal
 
 ---
 
+## Service Menus
+
+**What they are:** A unified booking page that displays multiple services from individual Service Calendars in one branded interface. Clients browse all available services and book what they need in a single flow. This is the right choice when a business offers several distinct services across multiple providers.
+
+**Where in GHL:** Settings → Calendar Settings → Service Menu tab → Create Service Menu
+
+**Prerequisites — must exist before building a Service Menu:**
+1. Service Calendars created (one per service)
+2. Calendar Groups created — Service Calendars must be assigned to a group; only grouped calendars can appear in a Service Menu
+
+---
+
+### How to Set Up a Service Menu
+
+**Step 1 — Enable the feature:**
+Settings → Calendar Settings → Preferences tab → Account Preference tab → Services section → turn on the Service Menu toggle → Save Preferences
+
+**Step 2 — Create the menu:**
+Settings → Calendar Settings → Service Menu tab → Create Service Menu
+- Name — displayed as the title of the menu
+- Description — optional summary shown to clients
+- Slug URL — forms the menu's custom URL path
+- Form — optional custom form to collect extra information beyond Name/Email/Phone at booking
+
+**Step 3 — Select services:**
+In the Service Menu editor → Select Services tab → check the calendars (services) to include
+
+**Step 4 — Arrange services:**
+Drag and drop to set the display order → Save
+
+---
+
+### Service Menu Limitations
+
+- Payments: Stripe only — no other payment processors
+- No card-on-file — customer cards are not saved after booking
+- No in-app payments — mobile app payment collection not supported
+- No coupon codes — discounts cannot be applied at checkout
+- For full payment flexibility (multiple processors, saved cards, coupon codes) → upgrade to Services v2
+
+---
+
+### Service Menu Key Points
+
+- Multiple Service Menus can be created — use different Calendar Groups for different menus
+- Clients can book multiple services in one session unless "Limit to One Service" is enabled
+- Custom tracking code/pixels can be added via the custom code field
+- Fully mobile-responsive
+
+---
+
+## Rooms
+
+**What they are:** Assignable physical spaces (consultation rooms, treatment chairs, therapy rooms, service bays) that are tied to Service Calendars. When a Room is linked to a calendar, the booking system checks Room availability alongside staff availability — preventing double-bookings of the space itself.
+
+**Where in GHL:** Settings → Calendar Settings → Rooms tab
+
+**Prerequisites:** Service Calendar(s) must exist before linking a Room.
+
+---
+
+### How to Set Up Rooms
+
+**Step 1 — Enable Rooms:**
+Settings → Calendar Settings → Preferences tab → Account Preference tab → Services section → turn on the Rooms toggle → Save Preferences
+
+**Step 2 — Create a Room:**
+Settings → Calendar Settings → Rooms tab → + Create Room
+
+**Step 3 — Fill in Room details:**
+- Name — clear identifier (e.g., "Consultation Room 2", "Massage Room A")
+- Description — notes about intended use
+- Total Capacity — maximum simultaneous appointments that can run in this room
+- Select Calendar — choose which Service Calendars this room is associated with
+
+---
+
+### Room Rules and Constraints
+
+- A Room can be assigned to multiple calendars — but if availability is not managed carefully, overlapping bookings can occur
+- Rooms are internal only — clients cannot see or select rooms; room assignment is handled by the booking logic
+- A Room not linked to any calendar has no effect on booking logic — it will not prevent double-bookings
+- Rooms can be edited or deleted at any time; deleting a Room removes its availability constraint from linked calendars
+- No official limit on the number of Rooms
+- Users are notified when assigned to a Room
+
+---
+
+## Equipment
+
+**What they are:** Shared physical tools, devices, or resources required to deliver a service (massage tables, exam chairs, hyper-facial machines, projectors, etc.). Equipment is linked to Service Calendars and its availability is tracked alongside staff and rooms — preventing a piece of equipment from being double-booked.
+
+**Where in GHL:** Settings → Calendar Settings → Equipment tab
+
+**Prerequisites:** Service Calendar(s) must exist before linking Equipment.
+
+---
+
+### How to Set Up Equipment
+
+**Step 1 — Enable Equipment:**
+Settings → Calendar Settings → Preferences tab → Account Preference tab → Services section → toggle on Equipments → Save Preferences
+
+**Step 2 — Create Equipment:**
+Settings → Calendar Settings → Equipment tab → Create Equipment
+
+**Step 3 — Fill in Equipment details:**
+- Equipment Name — unique identifier (e.g., "Massage Table", "Hyper-Facial Machine")
+- Description — brief description of purpose
+- Total Quantity — total number of units available (e.g., 3 massage tables = quantity of 3; only one equipment entry needed)
+- Out of Service Quantity — units currently unavailable for repair or maintenance; GHL subtracts this from available quantity automatically
+- Select Calendar — which Service Calendars this equipment is associated with
+
+---
+
+### Equipment Rules and Constraints
+
+- Equipment can be linked to multiple calendars but can only be used in one appointment at a time per unit
+- Out of Service Quantity reduces the bookable pool automatically — no manual calendar blocking needed
+- Deleting equipment that is actively in use removes the availability restriction and may cause double-bookings; review linked calendars before deleting
+- No native reporting for equipment usage — appointments tied to specific equipment must be reviewed manually via calendar view
+- To represent multiple identical items (e.g., 3 treatment chairs), create one entry and set Total Quantity to 3 — do not create three separate entries
+
+---
+
+### How Rooms and Equipment Connect to the Rest of the System
+
+- **Service Calendars** — Rooms and Equipment are linked at the calendar level; they only affect booking logic for the calendars they are assigned to
+- **Availability** — the booking system checks: staff availability + Room availability + Equipment availability. All three must be free for a slot to be offered.
+- **Workflows** — no direct workflow trigger for Room/Equipment status; availability constraints operate silently within the booking engine
+
+---
+
 ## Forms
 
 **What they are:** Data collection forms built inside GHL. Contacts submit forms to enter the system, provide information, or trigger automations. Every field on a form must map to a custom field on the contact record — forms are the bridge between what a contact fills out and what GHL stores and can act on.

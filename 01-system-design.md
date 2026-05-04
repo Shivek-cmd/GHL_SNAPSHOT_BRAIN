@@ -1,9 +1,10 @@
-# 01 — System Design
+# 01 — System Design Template
 
-> **Status:** ⬜ NOT GENERATED
-> **Instructions for AI:** Read `00-intake.md` completely. Then replace every section below with the actual system design for this snapshot. Do not build anything yet — this is a design document only. Once the human approves this file, building begins via `02-sequence.md`.
+> ⚠️ **THIS IS A TEMPLATE — DO NOT MODIFY THIS FILE**
 >
-> **Instructions for Human:** Review every section. If anything looks wrong, update `00-intake.md` and ask AI to regenerate this file. Do not approve until you are satisfied with the full architecture.
+> **For AI:** This file defines the structure and sections that every system design must contain. When building a new snapshot, use this as your reference to create `system-design_[snapshot-name].md` inside the snapshot folder. Do not write the actual design into this file.
+>
+> **For Human:** This file never changes. The actual system design for your snapshot will be created as `system-design_[snapshot-name].md` in your snapshot folder.
 
 ---
 

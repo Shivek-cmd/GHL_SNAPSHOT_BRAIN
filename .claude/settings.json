@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//d/Watts Company/SnapShots/Dental/**)"
+    ],
+    "additionalDirectories": [
+      "D:\\Watts Company\\SnapShots\\Hair Saloon\\custom-values"
+    ]
+  }
+}

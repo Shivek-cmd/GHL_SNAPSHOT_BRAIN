@@ -5,184 +5,238 @@
 
 ---
 
-## What This Folder Is
+## ⛔ HARD STOP — READ THIS FIRST
 
-This is a brain for building GHL snapshots. It does not contain a snapshot — it contains everything needed to design and build one correctly.
+**This brain has a strict sequence. Never skip a step.**
 
-When you come to this folder and describe what you want to build, the system guides you from a blank idea to a fully built, working GHL automation system.
+```
+STEP 0  →  Create the snapshot folder at the provided path
+STEP 1  →  Collect business details (intake)
+STEP 2  →  Create system-design_[name].md inside the snapshot folder   ← FIRST FILE CREATED
+STEP 3  →  Human reviews the system design                             ← HARD GATE
+           ↓ NO BUILD UNTIL HUMAN EXPLICITLY APPROVES
+STEP 4  →  Create snapshot folder structure
+STEP 5  →  Build one step at a time — ask "Shall I proceed?" at every step
+```
+
+**AI must NEVER:**
+- Create any snapshot component file (custom values, custom fields, tags, workflows, templates, calendars, pipelines, etc.) before the system design is explicitly approved
+- Modify `01-system-design.md` — that file stays in the brain as a template forever
+- Auto-continue to the next build step without asking first
+- Fill in the intake on behalf of the human
+
+---
+
+## What This Brain Is
+
+This is a master template for building GHL snapshots. It stays at its location permanently.
+
+For each new snapshot project:
+- Human provides the industry name + destination folder path
+- AI works from the brain as a reference
+- All output files are created inside the snapshot folder at the provided path — never inside this brain
+
+**The brain never changes when building a snapshot. Only the snapshot folder gets new files.**
 
 ---
 
 ## File Structure
 
 ```
-GHL_SNAPSHOT_BRAIN/
+GHL_SNAPSHOT_BRAIN/                ← Master template. Never modified during builds.
 │
-├── claude.md              ← This file. Read first.
-├── 00-intake.md          ← Fill this first. Your business brief.
-├── 01-system-design.md   ← AI generates this from intake. Review + approve before building.
-├── 02-sequence.md        ← Build checklist. Work through after approval.
+├── claude.md                      ← This file. AI reads first in every session.
+├── 00-intake.md                   ← Intake template. Human fills a copy or answers via chat.
+├── 01-system-design.md            ← System design TEMPLATE. AI uses this as structure reference only.
+├── 02-sequence.md                 ← Build checklist. AI follows this after approval.
 │
-├── ghl-guides/           ← How GHL features work. AI reads these to build correctly.
-│   ├── custom-data.md         Custom Values, Custom Fields, Tags, Smart Lists
-│   ├── communications.md      Email, SMS, WhatsApp
-│   ├── calendars-forms.md     Calendars, Forms
-│   ├── funnels-website.md     Funnels, Website, Chat Widget
-│   ├── pipelines.md           Pipelines, Opportunities
-│   ├── workflows.md           Automation, Trigger Links
-│   ├── ai-agents.md           Knowledge Bases, Conversation AI, Voice AI
-│   └── prompt-guidelines.md   How to write AI agent prompts correctly (GHL standard)
+├── ghl-guides/                    ← Technical GHL references. AI reads when building.
+│   ├── custom-data.md             Custom Values, Custom Fields, Tags, Smart Lists
+│   ├── communications.md          Email, SMS, WhatsApp
+│   ├── calendars-forms.md         Calendars, Forms, Service Menus, Rooms, Equipment
+│   ├── funnels-website.md         Funnels, Website, Chat Widget
+│   ├── pipelines.md               Pipelines, Opportunities
+│   ├── workflows.md               Automation, Trigger Links, all Triggers and Actions
+│   ├── ai-agents.md               Knowledge Bases, Conversation AI, Voice AI
+│   └── prompt-guidelines.md       How to write AI agent prompts (GHL standard)
 │
-└── snapshots/            ← Each approved + built snapshot lives here
-    └── [snapshot-name]/       Created automatically when system design is approved
+└── snapshots/                     ← Reference only. Actual builds go to the path the human provides.
 ```
 
 ---
 
-## How to Use This System — 3 Phases
-
-### Phase 1 — Fill the Intake
-
-Open `00-intake.md`. Fill every section. Be specific and honest.
-
-The intake is the root. Everything else derives from it. A detailed intake produces a detailed, accurate system design. A vague intake produces a vague system.
-
-When done, pass it to AI:
-> *"Read my intake form and generate the system design for this snapshot."*
+## The 5-Step Sequence
 
 ---
 
-### Phase 2 — Review the System Design
+### Step 0 — Create the Snapshot Folder
 
-AI reads your intake and generates `01-system-design.md`. This file shows you the full architecture: what will be built, how it connects, the customer lifecycle flowchart, pipelines, workflows, and naming conventions.
+**Triggered when:** Human says they want to build a snapshot for a specific industry or business.
 
-**Nothing is built yet.**
+**AI asks:** "What folder path should I create this snapshot in?"
 
-Review it. Ask questions. Ask AI to adjust it. Change the intake if needed and regenerate. Go back and forth until you're satisfied.
-
-When you're ready:
-> *"System design is approved. Create the snapshot folder and begin building."*
-
-AI will create a folder at `snapshots/[snapshot-name]/` using the standard structure below, then begin Step 1 of `02-sequence.md`.
+**AI does:**
+1. Creates the folder at the provided path
+2. Confirms: "Folder created at `[path]`. Now give me the business details and I'll generate the system design."
 
 ---
 
-## Snapshot Folder Structure
+### Step 1 — Collect Business Details (Intake)
 
-When a system design is approved, create this folder structure inside `snapshots/[snapshot-name]/`. Skip any folder whose component was marked SKIPPED in the system design.
+The human provides the business details. Two ways this can happen:
+
+**Option A — Via chat:** Human describes the business in conversation. AI asks follow-up questions based on `00-intake.md` until all key sections are covered. AI does not need the human to fill a file — chat answers are enough.
+
+**Option B — Via file:** Human fills `00-intake.md` (from the brain or a copy) and says "Read my intake form and generate the system design."
+
+Either way, AI must have answers covering all 12 parts of the intake before generating the system design.
+
+---
+
+### Step 2 — Create the System Design File ← FIRST FILE CREATED
+
+Using `01-system-design.md` as the structure reference, AI creates:
+
+**File:** `system-design_[snapshot-name].md`
+**Location:** Inside the snapshot folder at the provided path
+
+This file contains the full architecture for this specific business:
+- Snapshot summary and key outcomes
+- Complete component map (filtered by complexity and skips from intake)
+- Customer lifecycle flowchart (ASCII)
+- Pipeline architecture with all stage names
+- Workflow list with triggers, actions, and pipeline movements
+- Calendar architecture
+- AI agent architecture (or SKIPPED)
+- Naming conventions specific to this industry
+- Build sequence preview (what will be built, in what order)
+- Open questions that need clarification before building
+
+**After creating the file, AI STOPS.**
+
+AI says: *"System design is ready at `[path]/system-design_[snapshot-name].md`. Review it and let me know if anything needs to change. When you're happy with it, say 'approved' and I'll begin the build."*
+
+AI does not create any other files. AI waits.
+
+---
+
+### Step 3 — Human Reviews and Approves ← HARD GATE
+
+Human reads `system-design_[snapshot-name].md`.
+
+**Human can:**
+- Ask questions → AI explains or adjusts the design
+- Request changes → AI updates the file
+- Add or remove components → AI updates the file
+- Change complexity → AI updates the file
+
+**This loop continues until the human explicitly approves.**
+
+**Approval phrases AI listens for:**
+- "Approved"
+- "Looks good, proceed"
+- "Start the build"
+- "Begin building"
+- Any clear confirmation that the design is signed off
+
+**If unsure whether human is approving or just commenting**, AI asks: *"Should I mark this as approved and begin the build?"*
+
+When approved, AI adds `✅ APPROVED` to the top of `system-design_[snapshot-name].md` and moves to Step 4.
+
+---
+
+### Step 4 — Create the Snapshot Folder Structure
+
+AI creates the folder structure inside the snapshot folder. Only creates folders for components that are NOT marked SKIPPED in the system design.
 
 ```
-snapshots/[snapshot-name]/
+[snapshot-path]/
 │
-├── README.md                        ← Generated last. Full index of everything built.
+├── system-design_[name].md         ← Already exists (created in Step 2)
+├── README.md                        ← Created last, after everything is built
 │
 ├── custom-values/
-│   └── custom-values.md             ← All custom values, grouped by section
-│
+│   └── custom-values.md
 ├── custom-fields/
-│   └── custom-fields.md             ← All custom fields with type, key, and purpose
-│
+│   └── custom-fields.md
 ├── tags/
-│   └── tags.md                      ← Full tag list with category and which workflow uses each
-│
+│   └── tags.md
 ├── smart-lists/
-│   └── smart-lists.md               ← All smart lists with filter logic
-│
+│   └── smart-lists.md
 ├── email-templates/
-│   └── email-templates.md           ← All email templates (ET-01 onward), subject + body
-│
+│   └── email-templates.md
 ├── sms-templates/
-│   └── sms-templates.md             ← All SMS templates (ST-01 onward)
-│
+│   └── sms-templates.md
 ├── whatsapp-templates/              ← SKIP if WhatsApp = No
 │   └── whatsapp-templates.md
-│
 ├── calendars/
-│   └── calendars.md                 ← All calendars with full settings
-│
+│   └── calendars.md
 ├── forms/
-│   └── forms.md                     ← All forms with field mappings and submission triggers
-│
+│   └── forms.md
 ├── funnels/                         ← SKIP if Funnels = No
 │   └── funnels.md
-│
 ├── website/                         ← SKIP if Website = No
 │   └── website.md
-│
 ├── chat-widget/                     ← SKIP if Chat Widget = No
 │   └── chat-widget.md
-│
 ├── pipelines/
-│   └── pipelines.md                 ← All pipelines and stages
-│
+│   └── pipelines.md
 ├── trigger-links/
-│   └── trigger-links.md             ← All trigger links with destination and action
-│
+│   └── trigger-links.md
 ├── workflows/
 │   ├── 01-[workflow-name]/
-│   │   └── [workflow-name].md       ← One subfolder per workflow
+│   │   └── [workflow-name].md
 │   ├── 02-[workflow-name]/
 │   └── ...
-│
 ├── ai-agents/                       ← SKIP if all AI = No
 │   ├── conversation-ai/
 │   │   └── [bot-name]/
 │   │       └── [bot-name].md
 │   ├── knowledge-bases/
-│   │   └── knowledge-bases.md       ← All KBs with content outline
+│   │   └── knowledge-bases.md
 │   └── voice-ai/
 │       └── [agent-name]/
-│           └── [agent-name].md      ← One agent, inbound + outbound documented together
-│
+│           └── [agent-name].md
 └── surveys/                         ← SKIP if Surveys = No
     └── surveys.md
 ```
 
-**What each file contains:**
-- Every file documents what to build in GHL — it is the written specification for that component
-- Files use custom values and custom field keys throughout — never hardcoded client data
-- Workflows get individual subfolders so each can be built, tested, and marked complete independently
-- README.md is created last — it indexes everything and shows the connection map
-
-**On approval, create the folders first, then build into them step by step via `02-sequence.md`.**
+After creating the structure, AI says: *"Folder structure created. Ready to build. Shall I proceed with Step 1: Custom Values?"*
 
 ---
 
-### Phase 3 — Build
+### Step 5 — Build One Step at a Time
 
-There are two ways to build after a system design is approved:
+AI follows `02-sequence.md` in order.
+
+**The rule at every single step:**
+1. AI builds the current step — creates the file, fills it with the full specification
+2. AI marks the step `[x]` complete in `02-sequence.md`
+3. AI says what was just built (one sentence summary)
+4. AI asks: *"Shall I proceed with Step [X+1]: [Step Name]?"*
+5. AI waits for confirmation before moving on
+
+**Human can:**
+- Say "yes" / "proceed" / "next" → AI continues to the next step
+- Say "skip" → AI marks the step `[SKIP]` with a reason and asks about the next step
+- Ask questions about what was just built → AI answers, then asks again about proceeding
+- Request changes → AI updates the file, then asks about proceeding
+
+**AI never auto-continues.** Every step is a checkpoint.
 
 ---
 
-#### Option A — Full Build (default)
+## Targeted Build (Single Component)
 
-Say: *"System design is approved. Create the snapshot folder and begin building."*
+If the human wants only one component built:
 
-AI creates the full folder structure and works through `02-sequence.md` step by step — one step at a time, marking each complete, asking before moving to the next.
+Say: *"Build only the [component name]."*
 
-**If you make a change mid-build**, AI checks what else is affected and flags it before continuing. Nothing changes in isolation.
-
----
-
-#### Option B — Targeted Build (single component)
-
-Say: *"Build only the [component name] for this snapshot."*
-
-Examples:
-- *"Build only the Voice AI agent."*
-- *"Build only the workflows."*
-- *"Build only the email templates."*
-
-**What AI does in a targeted build:**
-
-1. Reads the system design to find the specification for that component
-2. Identifies its hard prerequisites — the things that must already exist in GHL for this component to function (see prerequisites table below)
-3. Builds only that component's file(s) inside the snapshot folder
-4. States clearly: "These prerequisites must be set up in GHL before this component will work" — lists them explicitly
-
-AI does NOT build the prerequisites automatically in a targeted build. It documents them so you know what to set up manually or ask to build next.
-
-**Component prerequisites:**
+AI:
+1. Reads `system-design_[snapshot-name].md` for that component's specification
+2. States all prerequisites that must already exist in GHL before this works
+3. Builds only that component's file
+4. Asks: *"[Component] is done. Shall I proceed with anything else?"*
 
 | Component | Must exist in GHL first |
 |-----------|------------------------|
@@ -204,20 +258,11 @@ AI does NOT build the prerequisites automatically in a targeted build. It docume
 | Voice AI Agent | Knowledge base, calendars, workflows |
 | Surveys | Custom fields |
 
-The finished snapshot folder contains all the files that document everything built.
-
 ---
 
 ## What the GHL Guides Are For
 
-The `ghl-guides/` files are technical references. They tell AI:
-- What each GHL feature is and how it works
-- How to create it (exact GHL menu path)
-- What the technical constraints and limits are
-- How it connects to other features
-- What rules GHL enforces that AI must follow
-
-The guides do **not** say what to build. That comes from the system design. The guides say **how** to build it correctly inside GHL.
+The `ghl-guides/` files tell AI how GHL features work — creation paths, constraints, connection rules. They do not say what to build. What to build comes from `system-design_[snapshot-name].md`. The guides say how to build it correctly.
 
 ---
 
@@ -225,23 +270,21 @@ The guides do **not** say what to build. That comes from the system design. The 
 
 **Never hardcode anything.**
 
-Every name, phone number, URL, price, and date in any template, workflow, funnel, or AI script must reference either:
-- `{{custom_values.key}}` — for business-level data
-- `{{contact.field_key}}` — for per-contact data
+Every name, phone number, URL, price, and date must reference:
+- `{{custom_values.key}}` — business-level data
+- `{{contact.field_key}}` — per-contact data
 
 This is what makes a snapshot reusable across any client in any market.
 
 ---
 
-## What "Complexity Level" Means
+## Complexity Level
 
-Complexity level in the intake is a ceiling, not a prescription.
+Complexity is a ceiling, not a component list.
 
-- **Simple** — the system should be clean and manageable. Prioritise what matters most. Don't add complexity the business doesn't need yet.
+- **Simple** — clean and manageable. Build what matters most. Don't add complexity the business doesn't need.
 - **Medium** — multi-channel, small team, moderate AI. Build what the intake justifies.
 - **Full** — build the complete system the intake describes. Don't hold back.
-
-AI uses complexity level as a judgment guide — not a fixed list of components.
 
 ---
 
@@ -249,7 +292,7 @@ AI uses complexity level as a judgment guide — not a fixed list of components.
 
 | Component | Convention | Example |
 |-----------|-----------|---------|
-| Custom Fields | `[industry]_field_name` | `dental_dob`, `gym_membership_type` |
+| Custom Fields | `[industry]_field_name` | `dental_dob`, `salon_hair_type` |
 | Custom Values | `variable_name` (snake_case) | `business_name`, `booking_link` |
 | Tags | `category-name` (kebab-case) | `lead-new`, `appt-scheduled` |
 | Workflows | `WF-##: Name` | `WF-01: New Lead Nurture` |
@@ -265,7 +308,7 @@ AI uses complexity level as a judgment guide — not a fixed list of components.
 
 ## Change Rules
 
-When something changes mid-build, AI must check:
+When something changes mid-build, AI checks this table and flags every affected component before continuing:
 
 | Changed | Must review |
 |---------|------------|
