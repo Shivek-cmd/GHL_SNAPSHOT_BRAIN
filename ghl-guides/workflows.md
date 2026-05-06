@@ -62,121 +62,331 @@ A workflow needs at least one trigger. All available GHL triggers are listed bel
 ---
 
 **Contact**
-- Birthday Reminder — fires on or around the contact's birthday using the offset you set
-- Contact Changed — fires when specified contact fields change to values you define
-- Contact Created — fires when a new contact record is added to the CRM
-- Contact DND — fires when a contact's Do Not Disturb preference is turned on or off
-- Contact Tag — fires when a selected tag is added to or removed from a contact
-- Custom Date Reminder — fires before/on/after a chosen custom date field on the contact
-- Note Added — fires when a new note is added on the contact
-- Note Changed — fires when an existing contact note is edited
-- Task Added — fires when a task is created for the contact
-- Task Reminder — fires when the task's reminder time is reached
-- Task Completed — fires when a task for the contact is marked completed
-- Contact Engagement Score — fires when the engagement score meets your rule
+
+**Birthday Reminder**
+Runs on each Contact's birthday at the time you select.
+Filters:
+- After: number of days (numeric value)
+- Day: 1–31
+- Month: January–December
+
+**Contact Changed**
+Fires when the chosen Contact fields are updated.
+Filters:
+- Assigned User: Has Changed | Has Changed To → select user
+- City: Has Changed | Has Changed To → text input
+- Contact Type: Has Changed | Has Changed To → Customer or Lead
+- Country: Has Changed | Has Changed To → select country
+- DND: Has Changed | Has Changed To → Disable DND for All Channels / Enable DND for All Channels
+- Email: Has Changed | Has Changed To → text input
+- Phone: Has Changed | Has Changed To → number with country code
+- Postal Code: Has Changed | Has Changed To → text input
+- State: Has Changed | Has Changed To → text input
+- Street Address: Has Changed | Has Changed To → text input
+- Tag: Added | Removed → select tag
+- Website: Has Changed | Has Changed To → text input
+- Custom Field (any): Has Changed | Has Changed To → depends on field type
+- Note: "Has Changed" requires no value. "Has Changed To" requires a value input.
+
+**Contact Created**
+Activates the moment a new Contact record is added.
+Filters:
+- Contact Type: equals to | not equals to → Lead / Customer
+- Email: equals to | not equals to → any value
+- Phone: equals to | not equals to → any value (with country code)
+- Tag: equals to | not equals to | any of | none of → select tag from list
+- Custom Field (any): contains phrase → any value | exact match phrase → any value | intent type → Positive (Yes) / Negative (No) | is not empty → no value
+
+**Contact DND**
+Triggers when Do-Not-Disturb is enabled or removed.
+Filters:
+- DND Direction is: Outbound | Inbound
+- DND Flag is: DND Disabled for All Channels | Disabled DND for Specific Channels | Enable DND for All Channels | Enabled DND for Specific Channels
+- Tag: equals to | not equals to | any of | none of → select tag from dropdown
+- Custom Field (any): contains phrase → any value | exact match phrase → any value | intent type → Positive (Yes) / Negative (No) | is not empty → no value
+
+**Contact Tag**
+Runs when the specified tag is applied or cleared.
+Filters:
+- Tag Added: select tag from list
+- Tag Removed: select tag from list
+- Custom Field (any): contains phrase → any value | exact match phrase → any value | intent type → Positive (Yes) / Negative (No) | is not empty → no value
+
+**Custom Date Reminder**
+Enrolls Contacts on a date stored in any custom field.
+Filters:
+- Contact Date Field: dropdown → all date-type fields (Created On, Updated On, custom date fields)
+- Has Tag: select tag from list
+- Opportunity Date Field: dropdown → all date-type opportunity fields
+- Custom Field (any): contains phrase → any value | exact match phrase → any value | intent type → Positive (Yes) / Negative (No) | is not empty → no value
+- ☐ Checkbox: Match on the year along with the day and month
+
+**Note Added**
+Fires whenever a new note is attached to the Contact.
+Filters:
+- Doesn't Have Tag: select tag from list
+- Have Tag: select tag from list
+
+**Note Changed**
+Activates when an existing note is edited.
+Filters:
+- Doesn't Have Tag: select tag from list
+- Have Tag: select tag from list
+
+**Task Added**
+Triggers when a task is created for the Contact.
+Filters:
+- Assigned User: select user
+
+**Task Reminder**
+Runs at the reminder time of a task.
+Filters:
+- After no. of days: numeric value
+- Before no. of days: numeric value
+
+**Task Completed**
+Task completed trigger.
+Filters:
+- Assigned User: select user
+
+**Contact Engagement Score**
+Use this trigger to initiate workflow when a contact's engagement score meets a specific condition.
+Filters:
+- Score: Between | Equals To | Greater Than | Greater Than or Equal To | Less Than | Less Than or Equal To | Is Empty | Is Not Empty | Not Equal To → numeric value
+
+---
 
 **Events**
-- Inbound Webhook — fires when data is received at the workflow's webhook URL
-- Scheduler — fires on a time-based schedule without needing a contact
-- Call Details — fires when a call log matches selected details or outcomes
-- Email Events — fires on email delivered, opened, clicked, bounced, spam, or unsubscribe
-- Customer Replied — fires when the contact replies on any connected channel
-- Conversation AI Trigger — fires when a configured Conversation AI event occurs
-- Custom Trigger — fires from a custom event you define for non-standard use cases
-- Form Submitted — fires when a selected GHL form is submitted
-- Survey Submitted — fires when a selected survey is submitted
-- Trigger Link Clicked — fires when the contact clicks a defined trigger link
-- Facebook Lead Form Submitted — fires when a Facebook Lead Ad form submission is received
-- TikTok Form Submitted — fires when a TikTok lead form is submitted
-- Video Tracking — fires when a viewer reaches a chosen percentage of a video
-- Number Validation — fires based on the phone number validation result
-- Messaging Error – SMS — fires when an outbound SMS returns a specific error
-- LinkedIn Lead Form Submitted — fires when a LinkedIn Lead Gen form submission is received
-- Funnel/Website PageView — fires when the contact views a specified page/URL or UTM parameter
-- Quiz Submitted — fires when a selected quiz is submitted
-- New Review Received — fires when a new review arrives in Reviews/Reputation
-- Prospect Generated — fires when a new prospect record is created
-- Click To WhatsApp Ads — fires when an inbound WhatsApp thread starts from a Click-to-WhatsApp ad
-- External Tracking Event — fires when a named client-side/server-side tracking event is captured
+
+**Inbound Webhook**
+Starts the workflow when an external system posts to your webhook URL.
+Details:
+- URL (POST / GET / PUT): GHL generates a unique webhook URL for this workflow. Max payload size: 1MB.
+- Mapping Reference: map incoming payload fields to GHL contact fields
+- Fetch Sample Requests: pull a recent request to inspect the payload structure
+**Scheduler**
+Adds a workflow trigger, and on execution, the Contact gets added to the workflow.
+Filters:
+- Interval: Hourly | Daily | Weekly | Monthly | Cron
+  - Hourly: enter number of hours
+  - Daily: select time (24-hour format)
+  - Weekly: select days of the week + time
+  - Monthly: select pattern →
+    - Days of Month: select date (1–31) + time
+    - Week and Day of Month: select week (First / Second / Third / Fourth) + time
+  - Cron: enter cron expression in standard format → `*minute *hour *day *month *weekday`
+    - Examples: `0 9 * * 1` (Mondays at 9 AM) | `30 14 1 * *` (1st of month at 2:30 PM) | `0 */2 * * *` (every 2 hours)
+    - Note: expressions that run more than once per hour are not allowed
+- Advanced Setting — Skip Weekends: when enabled, scheduled executions skip Saturdays and Sundays
+- Stop On: select a date/time to stop the scheduler from running after that point
+**Call Details**
+Fires after a call ends with the selected status.
+Filters:
+- Call Direction: Incoming | Outgoing
+- Call Status: ☐ Busy ☐ Cancelled ☐ Completed ☐ No Answer ☐ Voicemail
+- Custom Disposition: ☐ Follow Up ☐ Incorrect Number ☐ No Answer ☐ Not Interested ☐ Requested Appointment ☐ Voicemail
+- In Number Pool: select number pool
+- In Phone Number: select phone number
+
+**Email Events**
+Triggers on open, click, bounce, or reply events.
+Filters:
+- Event: ☐ Bounced ☐ Clicked ☐ Complained (Spam) ☐ Opened ☐ Unsubscribed
+- In Workflow: select workflow
+
+**Customer Replied**
+
+**Conversation AI Trigger**
+
+**Custom Trigger**
+
+**Form Submitted**
+
+**Survey Submitted**
+
+**Trigger Link Clicked**
+
+**Facebook Lead Form Submitted**
+
+**TikTok Form Submitted**
+
+**Video Tracking**
+
+**Number Validation**
+
+**Messaging Error – SMS**
+
+**LinkedIn Lead Form Submitted**
+
+**Funnel/Website PageView**
+
+**Quiz Submitted**
+
+**New Review Received**
+
+**Prospect Generated**
+
+**Click To WhatsApp Ads**
+
+**External Tracking Event**
+
+---
 
 **Appointments**
-- Appointment Status — fires on status changes: booked, rescheduled, cancelled, or no-show
-- Customer Booked Appointment — fires when a customer books an appointment
-- Service Booking — fires when a booking is made using Services (v2)
-- Rental Booking — fires when a rental reservation is booked
+
+**Appointment Status**
+
+**Customer Booked Appointment**
+
+**Service Booking**
+
+**Rental Booking**
+
+---
 
 **Opportunities**
-- Opportunity Status Changed — fires when an opportunity's status changes (e.g., Open → Won/Lost)
-- Opportunity Created — fires when a new opportunity is created
-- Opportunity Changed — fires when selected opportunity fields change
-- Pipeline Stage Changed — fires when an opportunity moves to a different pipeline stage
-- Stale Opportunities — fires when opportunities meet your inactivity/stale rule
+
+**Opportunity Status Changed**
+
+**Opportunity Created**
+
+**Opportunity Changed**
+
+**Pipeline Stage Changed**
+
+**Stale Opportunities**
+
+---
 
 **Affiliate**
-- Affiliate Created — fires when a new affiliate account is created
-- New Affiliate Sales — fires when a sale is attributed to an affiliate
-- Affiliate Enrolled In Campaign — fires when an affiliate is added to a campaign
-- Lead Created — fires when a new affiliate-attributed lead is created
+
+**Affiliate Created**
+
+**New Affiliate Sales**
+
+**Affiliate Enrolled In Campaign**
+
+**Lead Created**
+
+---
 
 **Courses**
-- Category Started — fires when a learner starts a selected course category
-- Category Completed — fires when a learner completes a selected course category
-- Lesson Started — fires when a learner starts a lesson
-- Lesson Completed — fires when a learner completes a lesson
-- New Signup — fires when a user signs up for a course/offer
-- Offer Access Granted — fires when access to an offer is granted
-- Offer Access Removed — fires when access to an offer is removed
-- Product Access Granted — fires when access to a product is granted
-- Product Access Removed — fires when access to a product is removed
-- Product Started — fires when a learner starts a product/course
-- Product Completed — fires when a learner completes a product/course
-- User Login — fires when a learner logs in to the learning portal
+
+**Category Started**
+
+**Category Completed**
+
+**Lesson Started**
+
+**Lesson Completed**
+
+**New Signup**
+
+**Offer Access Granted**
+
+**Offer Access Removed**
+
+**Product Access Granted**
+
+**Product Access Removed**
+
+**Product Started**
+
+**Product Completed**
+
+**User Login**
+
+---
 
 **Payments**
-- Invoice — fires on invoice lifecycle events: created, sent, due, or paid
-- Payment Received — fires when a payment is successfully captured
-- Order Form Submission — fires when a checkout/order form is submitted
-- Order Submitted — fires when an order is successfully submitted at checkout
-- Documents & Contracts — fires on document status events: sent, signed, or declined
-- Estimates — fires on estimate events: sent, accepted, or declined
-- Subscription — fires on subscription create, update, pause, resume, or cancel
-- Refund — fires when a refund is issued
-- Coupon Code Applied — fires when a coupon code is applied to a purchase
-- Coupon Redemption Limit Reached — fires when a coupon hits its redemption limit
-- Coupon Code Expired — fires when a coupon code expires
-- Coupon Code Redeemed — fires when a coupon code is redeemed
+
+**Invoice**
+
+**Payment Received**
+
+**Order Form Submission**
+
+**Order Submitted**
+
+**Documents & Contracts**
+
+**Estimates**
+
+**Subscription**
+
+**Refund**
+
+**Coupon Code Applied**
+
+**Coupon Redemption Limit Reached**
+
+**Coupon Code Expired**
+
+**Coupon Code Redeemed**
+
+---
 
 **Ecommerce Stores**
-- Shopify Order Placed — fires when a Shopify order is placed
-- Order Fulfilled — fires when a store order is fulfilled in your current store connection
-- Product Review Submitted — fires when a product review is submitted
-- Abandoned Checkout — fires when a checkout session is abandoned
-- Shopify Abandoned Cart *(deprecating)* — legacy Shopify abandoned cart trigger
-- Shopify Order Fulfilled *(deprecating)* — legacy Shopify fulfilled order trigger
+
+**Shopify Order Placed**
+
+**Order Fulfilled**
+
+**Product Review Submitted**
+
+**Abandoned Checkout**
+
+**Shopify Abandoned Cart** *(deprecating)*
+
+**Shopify Order Fulfilled** *(deprecating)*
+
+---
 
 **IVR**
-- Start IVR Trigger — fires when a caller reaches a configured IVR entry or option
+
+**Start IVR Trigger**
+
+---
 
 **Facebook / Instagram**
-- Facebook – Comment(s) On A Post — fires when comments are added to the selected Facebook post
-- Instagram – Comment(s) On A Post — fires when comments are added to the selected Instagram post
+
+**Facebook – Comment(s) On A Post**
+
+**Instagram – Comment(s) On A Post**
+
+---
 
 **Communities**
-- Group Access Granted — fires when a member is granted access to a group
-- Group Access Revoked — fires when a member's group access is revoked
-- Private Channel Access Granted — fires when access to a private channel is granted
-- Private Channel Access Revoked — fires when access to a private channel is revoked
-- Community Group Member Leaderboard Level Changed — fires when a member's leaderboard level changes
+
+**Group Access Granted**
+
+**Group Access Revoked**
+
+**Private Channel Access Granted**
+
+**Private Channel Access Revoked**
+
+**Community Group Member Leaderboard Level Changed**
+
+---
 
 **Certificates**
-- Certificates Issued — fires when a course certificate is generated
+
+**Certificates Issued**
+
+---
 
 **Communication**
-- TikTok – Comment(s) On A Video — fires when comments are added to a selected TikTok video
-- Transcript Generated — fires when a call or conversation transcript is created
+
+**TikTok – Comment(s) On A Video**
+
+**Transcript Generated**
+
+---
 
 **Google Ads**
-- Google Lead Form Submitted — fires when a Google Ads lead form submission is received
+
+**Google Lead Form Submitted**
 
 ---
 
