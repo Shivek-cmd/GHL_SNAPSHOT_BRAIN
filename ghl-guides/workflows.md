@@ -223,6 +223,11 @@ Filters:
 **Quiz Submitted**
 
 **New Review Received**
+Triggers when a new review comes in from Facebook or Google. This trigger is contactless — reviews are not linked to any specific contact.
+Filters:
+- Is Review Spam: Is | Is Not → Yes / No | Is Empty | Is Not Empty → no value
+- Review Rating: Between → min value + max value | Equals To → value | Greater Than → value | Greater Than or Equal To → value | Less Than → value | Less Than or Equal To → value | Not Equal To → value | Is Empty → no value | Is Not Empty → no value
+- Review Source: Is | Is Not → Facebook / Google | Is Empty → no value | Is Not Empty → no value
 
 **Prospect Generated**
 
@@ -419,7 +424,10 @@ Filters:
 - Send SMS — sends an SMS using a saved template (ST-##) or entered text
 - Send WhatsApp — sends a WhatsApp message using an approved template (WA-##)
 - Send Internal Notification — sends an email or SMS to an assigned user or team member (not the contact)
-- Send Review Request — sends a review request to the contact via email or SMS
+- Send Review Request — sends a review request to the contact
+  - Action Name: label this action
+  - Review Type: SMS | Email | WhatsApp (template must be created inside Reputation → Settings first)
+  - Override Review Link: dropdown → No Override | select a specific review link to override the default
 - Manual Action — prompts a team member to take a manual action; pauses the workflow until marked done
 - Call — dials the contact; if they answer, connects to the assigned user; used for auto-dialing and outreach
 - Messenger — sends a Facebook Messenger message to the contact
