@@ -306,8 +306,74 @@ Filters:
 **Payments**
 
 **Invoice**
+Fires on invoice creation, send, or overdue reminder.
+Filters:
+- Invoice Status: Sent | Paid | Partially Paid | Viewed | Void
+- Tag: select tag from list
 
 **Payment Received**
+Fires whenever a matching payment is received across the CRM — one-time purchases, subscriptions, invoices, order forms, etc. Fires on both successful and failed transactions by default.
+Filters:
+- Global Product: Is | Is Not → select product from product library
+  - Sub-filter: Price → select price name per selected product
+- Payment Status: Is | Is Not → Failed | Success
+- Source: Is | Is Not → Calendar | External | Form | Funnel | Invoice | Manual Payment | Memberships | Survey | Website
+  - Sub-source (when Source = Invoice): Text2Pay Link | One-time Invoice | Recurring Template
+  - Sub-source (when Source = Funnel / Website): One-step Order Form | Two-step Order Form | Upsell
+  - Sub-source (when Source = Calendar): select calendar name
+  - Transaction Type (when Source = Funnel / Website): Customer Present / First Transaction | Customer Not Present / Subscription Transaction
+
+**Transaction Type Explained:**
+- Customer Present / First Transaction — customer is on-session making the payment; includes all one-time purchases and the first order placement for a subscription product
+- Customer Not Present / Subscription Transaction — runs in the background after a subscription is already created (e.g., recurring charge after trial ends)
+
+**If/Else Conditions available inside the workflow:**
+
+| Condition | Operator | Options |
+|-----------|----------|---------|
+| Product | Is / Is Not | Global product names |
+| Funnel/Website | Is / Is Not | Funnel/Website names |
+| Calendar | Is / Is Not | Calendar names |
+| Source | Is / Is Not | Invoice / Funnel / Website / Calendar |
+| Payment Status | — | Success / Failed |
+| Amount | Equals To / Not Equal To / Greater Than / Greater Than or Equal To / Less Than / Less Than or Equal To / Is Empty / Is Not Empty | Numeric value |
+
+**Custom Values available in this trigger:**
+
+| Custom Value | Tag |
+|-------------|-----|
+| Payment Source | `{{payment.source}}` |
+| Currency Symbol | `{{payment.currency_symbol}}` |
+| Currency Code | `{{payment.currency_code}}` |
+| Customer ID | `{{payment.customer.id}}` |
+| Customer First Name | `{{payment.customer.first_name}}` |
+| Customer Last Name | `{{payment.customer.last_name}}` |
+| Customer Name | `{{payment.customer.name}}` |
+| Customer Email | `{{payment.customer.email}}` |
+| Customer Phone | `{{payment.customer.phone}}` |
+| Customer Full Address | `{{payment.customer.address}}` |
+| Customer City | `{{payment.customer.city}}` |
+| Customer State | `{{payment.customer.state}}` |
+| Customer Country | `{{payment.customer.country}}` |
+| Customer Postal Code | `{{payment.customer.postal_code}}` |
+| Invoice Name | `{{payment.invoice.name}}` |
+| Invoice Number | `{{payment.invoice.number}}` |
+| Invoice Issue Date | `{{payment.invoice.issue_date}}` |
+| Invoice Due Date | `{{payment.invoice.due_date}}` |
+| Invoice URL | `{{payment.invoice.url}}` |
+| Invoice Recorded By | `{{payment.invoice.recorded_by}}` |
+| Sub-Total | `{{payment.sub_total_amount}}` |
+| Discount Amount | `{{payment.discount_amount}}` |
+| Coupon Code | `{{payment.coupon_code}}` |
+| Tax Amount | `{{payment.tax_amount}}` |
+| Created On | `{{payment.created_on}}` |
+| Total Amount | `{{payment.total_amount}}` |
+| Transaction ID | `{{payment.transaction_id}}` |
+| Payment Status | `{{payment.payment_status}}` |
+| Payment Gateway | `{{payment.gateway}}` |
+| Card Last 4 Digits | `{{payment.card.last4}}` |
+| Card Brand | `{{payment.card.brand}}` |
+| Payment Method | `{{payment.method}}` |
 
 **Order Form Submission**
 
@@ -523,6 +589,27 @@ Fields:
 **Stripe One-Time Charge**
 
 **Send Invoice**
+Sends a one-time invoice to the contact.
+Fields:
+- Action Name: label this action
+- From User: select user
+- Invoice Template: select template created inside Payments → Invoices & Estimates → Templates
+- Payment Mode: Live
+- Channel: Email | Text | Email & Text
+
+**Send Recurring Invoice**
+Sends a recurring invoice to the contact on a defined schedule.
+Fields:
+- Action Name: label this action
+- From User: select user
+- Invoice Template: select template created inside Payments → Invoices & Estimates → Templates
+- Payment Mode: Live
+- Start Date: Action (date the action fires) | Fixed Date (select specific date)
+- End: select when the recurring series stops
+- How Often: select frequency
+- Every X: number of intervals
+- Enable Auto-Payment: when enabled, the card used to pay the first invoice is auto-deducted for all subsequent invoices
+- Channel: Email | Text | Email & Text
 
 **Send Documents and Contracts**
 
