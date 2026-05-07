@@ -400,140 +400,221 @@ Filters:
 ---
 
 **Contact**
-- Create Contact — adds a new contact to the CRM; automates lead capture from external sources
-- Find Contact — locates an existing contact based on provided data; use before updating or referencing
-- Update Contact Field — writes a value to a specific custom field on the contact
-- Update Contact — updates standard contact fields (name, email, phone, address, etc.)
-- Add Contact Tag — adds a tag to a contact for segmentation and workflow triggering
-- Remove Contact Tag — removes a tag from a contact
-- Assign to User — assigns the contact to a specific team member
-- Remove Assigned User — clears the assigned user from the contact
-- Edit Conversation — marks, archives, or unarchives a conversation in the inbox
-- Disable/Enable DND — turns Do Not Disturb on or off; controls whether outbound messages are suppressed
-- Add Note — adds a custom note to the contact record
-- Add Task — creates a task tied to the contact; if no contact exists (e.g., inbound webhook), creates a contact-less task
-- Copy Contact — duplicates a contact into another sub-account
-- Delete Contact — permanently removes a contact from the CRM
-- Modify Contact Engagement Score — adjusts the contact's engagement score up or down
-- Add/Remove Contact Followers — adds or removes team members as followers on the contact
+
+**Create Contact**
+
+**Find Contact**
+
+**Update Contact Field**
+
+**Update Contact**
+
+**Add Contact Tag**
+
+**Remove Contact Tag**
+
+**Assign to User**
+
+**Remove Assigned User**
+
+**Edit Conversation**
+
+**Disable/Enable DND**
+
+**Add Note**
+
+**Add Task**
+
+**Copy Contact**
+
+**Delete Contact**
+
+**Modify Contact Engagement Score**
+
+**Add/Remove Contact Followers**
 
 ---
 
 **Communication**
-- Send Email — sends an email using a saved template (ET-##). Never write content inline — always reference a template.
-- Send SMS — sends an SMS using a saved template (ST-##) or entered text
-- Send WhatsApp — sends a WhatsApp message using an approved template (WA-##)
-- Send Internal Notification — sends an email or SMS to an assigned user or team member (not the contact)
-- Send Review Request — sends a review request to the contact
-  - Action Name: label this action
-  - Review Type: SMS | Email | WhatsApp (template must be created inside Reputation → Settings first)
-  - Override Review Link: dropdown → No Override | select a specific review link to override the default
-- Manual Action — prompts a team member to take a manual action; pauses the workflow until marked done
-- Call — dials the contact; if they answer, connects to the assigned user; used for auto-dialing and outreach
-- Messenger — sends a Facebook Messenger message to the contact
-- Instagram DM — sends an Instagram Direct Message to the contact
-- WhatsApp — sends a WhatsApp message at the channel level
-- Send Live Chat Message — sends a message via the live chat channel
-- GMB Messaging — responds to a Google My Business message thread
-- Conversation AI — hands the contact's active conversation to Conversation AI for AI-managed replies
-- Facebook Interactive Messenger — responds to Facebook comments on a post
-- Instagram Interactive Messenger — responds to Instagram comments on a post
-- Reply in Comments — replies to comments on Facebook or Instagram posts
-- Send Slack Message — sends a message to a Slack channel or user (requires Slack integration)
+
+**Send Email**
+
+**Send SMS**
+
+**Send WhatsApp**
+
+**Send Internal Notification**
+
+**Send Review Request**
+Sends a review request to the contact.
+Fields:
+- Action Name: label this action
+- Review Type: SMS | Email | WhatsApp (template must be created inside Reputation → Settings first)
+- Override Review Link: dropdown → No Override | select a specific review link to override the default
+
+**Manual Action**
+
+**Call**
+
+**Messenger**
+
+**Instagram DM**
+
+**WhatsApp**
+
+**Send Live Chat Message**
+
+**GMB Messaging**
+
+**Conversation AI**
+
+**Facebook Interactive Messenger**
+
+**Instagram Interactive Messenger**
+
+**Reply in Comments**
+
+**Send Slack Message**
 
 ---
 
 **Pipeline**
-- Create/Update Opportunity — creates a new opportunity in a pipeline or updates an existing one (stage, value, owner)
-- Move Opportunity — moves the opportunity to a specific stage (pipeline name + exact stage name required)
-- Remove Opportunity — removes the opportunity from one or all pipelines
+
+**Create/Update Opportunity**
+
+**Move Opportunity**
+
+**Remove Opportunity**
 
 ---
 
 **AI — Premium Actions** *(each execution incurs an additional charge)*
-- AI Translate — translates a text input from one language to another. Configure: From Language, To Language, Input Text (supports merge tags). Use when messaging contacts in their preferred language.
-- AI Summarize — generates a condensed summary of a long text. Configure: Max Length (e.g., "3 sentences", "100 words"), Input Text. Use to summarise call transcripts, notes, or form responses before storing or forwarding.
-- AI Intent Detection — analyses the sentiment and intent of a text input. Returns a classification of what the contact is trying to communicate. Feed output into If/Else or AI Decision Maker to route accordingly.
-- AI Decision Maker — routes the contact into one of several named branches based on AI evaluation of contact data. Configure: Instructions (plain-language criteria with merge tags), Additional Context (business background), and Branches (each with a name and description). Always include a Default Branch. Use when routing logic is better expressed in plain language than hard If/Else conditions.
-- AI Prompt (GPT-3 Powered) — generates an AI response based on a custom prompt. Use for dynamic content generation, personalised message drafting, or data enrichment.
+
+**AI Translate**
+
+**AI Summarize**
+
+**AI Intent Detection**
+
+**AI Decision Maker**
+
+**AI Prompt** *(GPT-3 Powered)*
 
 ---
 
 **Appointments**
-- Update Appointment Status — updates an appointment's status: rescheduled, no-show, completed, cancelled
-- Generate One Time Booking Link — generates a single-use booking link to send via SMS or email; prevents the same link being used for multiple bookings
+
+**Update Appointment Status**
+
+**Generate One Time Booking Link**
 
 ---
 
 **Opportunities**
-- Create/Update Opportunity — creates a new opportunity in a pipeline or updates an existing one (stage, value, owner)
-- Remove Opportunity — removes the opportunity from one or all pipelines
+
+**Create/Update Opportunity**
+
+**Remove Opportunity**
 
 ---
 
 **Payments**
-- Stripe One-Time Charge — charges the contact a one-time fee via Stripe using their stored Stripe Customer ID
-- Send Invoice — sends a GHL invoice to the contact
-- Send Documents and Contracts — sends a document or contract from a saved template to the contact for signing
+
+**Stripe One-Time Charge**
+
+**Send Invoice**
+
+**Send Documents and Contracts**
 
 ---
 
 **Marketing**
-- Add to Google Analytics — sends contact event data to Google Analytics
-- Add to Google AdWords — adds the contact to a Google AdWords audience
-- Add to Custom Audience (Facebook) — adds the contact to a Facebook custom audience for ad targeting
-- Remove from Custom Audience (Facebook) — removes the contact from a Facebook custom audience
-- Facebook Conversion API — sends conversion event data to Facebook for improved ad attribution
+
+**Add to Google Analytics**
+
+**Add to Google AdWords**
+
+**Add to Custom Audience (Facebook)**
+
+**Remove from Custom Audience (Facebook)**
+
+**Facebook Conversion API**
 
 ---
 
 **Affiliate**
-- Add to Affiliate Manager — creates a new affiliate record in the affiliate manager
-- Update Affiliate — updates existing affiliate details
-- Add/Remove from Affiliate Campaign — adds or removes an affiliate from a specific campaign
+
+**Add to Affiliate Manager**
+
+**Update Affiliate**
+
+**Add/Remove from Affiliate Campaign**
 
 ---
 
 **Courses**
-- Course Grant Offer — grants access to a course offer for the contact
-- Course Revoke Offer — revokes access to a course offer
+
+**Course Grant Offer**
+
+**Course Revoke Offer**
 
 ---
 
 **IVR (Interactive Voice Response)**
-- Gather Input on Call — collects keypad or voice input from a caller to determine their next IVR path
-- Play Message — plays a pre-recorded or text-to-speech message during the IVR call
-- Connect to Call — forwards the call to a specific user or phone number
-- End Call — terminates the call
-- Record Voicemail — records a voicemail message from the caller
+
+**Gather Input on Call**
+
+**Play Message**
+
+**Connect to Call**
+
+**End Call**
+
+**Record Voicemail**
 
 ---
 
 **Communities**
-- Grant Group Access — grants a contact access to a specific community group
-- Revoke Group Access — removes a contact's access to a community group
+
+**Grant Group Access**
+
+**Revoke Group Access**
 
 ---
 
 **Send Data**
-- Webhook / Custom Webhook — sends data from GHL to an external URL (Zapier, Make, custom endpoint). Use `{{custom_values.*}}` for endpoint URLs — never hardcode.
-- Google Sheets — reads from or writes to a Google Sheets spreadsheet (requires Google integration); useful for reporting and data exports
+
+**Webhook / Custom Webhook**
+
+**Google Sheets**
 
 ---
 
 **Internal Tools / Flow Control**
-- If / Else — branches the workflow on conditions: tag, custom field value, pipeline stage, appointment status, or contact field. One true + one false branch — chain blocks for more than two paths.
-- Wait — pauses for a fixed duration (hours/days) or until a specific date/time
-- Wait Until — pauses until a condition is met; always set a timeout to prevent contacts getting permanently stuck
-- Goal Event — moves a contact directly to a target step if a condition is met, skipping steps in between; optimises journey paths
-- Split — A/B split test within the workflow; divides contacts between two paths for comparison
-- Go To — redirects to another step in the same workflow or into a different workflow entirely
-- Remove from Workflow — removes the contact from this or another active workflow
-- Drip Mode — processes contacts through the workflow in controlled batch sizes to protect deliverability rates
-- Arrays — handles multiple values as a single unit; supports sorting, searching, and iterating over data collections
-- Text Formatter — transforms text: capitalise, trim, replace, extract, reformat dates, etc.
-- Custom Code — executes a custom JavaScript block for advanced data processing or logic not available through standard actions
-- Update Custom Value — updates a sub-account-level custom value during workflow execution
+
+**If / Else**
+
+**Wait**
+
+**Wait Until**
+
+**Goal Event**
+
+**Split**
+
+**Go To**
+
+**Remove from Workflow**
+
+**Drip Mode**
+
+**Arrays**
+
+**Text Formatter**
+
+**Custom Code**
+
+**Update Custom Value**
 
 ---
 
