@@ -422,8 +422,28 @@ Filters:
 **Facebook / Instagram**
 
 **Facebook – Comment(s) On A Post**
+Fires when a comment on a Facebook post matches the filters you set.
+Filters:
+- Page Is: select from connected Facebook pages
+- Post Type: Published Post (all posts on the page) | Custom Post (enter URL)
+- Post Is: select the specific post (based on Page Is + Post Type selection)
+- Contains Phrase: fires if the comment body contains the exact text string → e.g., phrase "I bought from you" matches "I bought from you yesterday" but NOT "I bought one from you"
+- Exact Match: fires only if the entire comment body exactly matches the text string → e.g., phrase "I bought from you" matches only "I bought from you" — not "I bought from you yesterday"
+Toggle:
+- Track First Level Comments Only → ON: trigger fires only for top-level comments, not for replies under a comment | OFF: fires for all comments including nested replies
+Note: Automatic comments posted by workflow actions do not re-trigger this workflow — no infinite loop risk.
 
 **Instagram – Comment(s) On A Post**
+Fires when a comment on an Instagram post matches the filters you set.
+Filters:
+- Page Is: select from connected Instagram accounts
+- Post Type: Published Post (all posts on the account) | Custom Post (enter URL)
+- Post Is: select the specific post (based on Page Is + Post Type selection)
+- Contains Phrase: fires if the comment body contains the exact text string → e.g., phrase "I bought from you" matches "I bought from you yesterday" but NOT "I bought one from you"
+- Exact Match: fires only if the entire comment body exactly matches the text string → e.g., phrase "I bought from you" matches only "I bought from you" — not "I bought from you yesterday"
+Toggle:
+- Track First Level Comments Only → ON: trigger fires only for top-level comments, not for replies under a comment | OFF: fires for all comments including nested replies
+Note: Automatic comments posted by workflow actions do not re-trigger this workflow — no infinite loop risk.
 
 ---
 
@@ -535,10 +555,41 @@ Fields:
 **Conversation AI**
 
 **Facebook Interactive Messenger**
+Automates Facebook Messenger conversations with interactive buttons and quick replies.
+Note: Follows Meta's 24-hour messaging policy — messages only deliver within 24 hours of the contact's last interaction with the Facebook Page.
+Fields:
+- Action Name: label this action
+- Reply Type: Reply to Comment via DM (use when trigger is a comment, takes conversation private) | Reply to DM (use when responding to an existing DM)
+- Templates: pull from Marketing → Snippets
+- Message Body: text with Custom Values and Trigger Links
+- Add Attachment: upload file or add via URL
+- Add New Button (up to 3): each button has a label and an action →
+  - Open Website: enter URL, opens in new tab, button stays visible after click
+  - Call Number: enter phone number, opens dialer, button stays visible after click
+  - Perform Action: creates a workflow branch, no specific external event
+- Add Quick Reply (up to 13): label displayed in conversation; disappears after user selects it
+- Wait Step: time to wait for user interaction before routing to Default Timeout branch
 
 **Instagram Interactive Messenger**
+Automates Instagram DM conversations with interactive buttons and quick replies. Only available when workflow uses an Instagram trigger (Instagram Comment on Post or Customer Reply — Instagram).
+Note: Instagram follows Meta's 24-hour messaging rule — DMs only send within 24 hours of the last user interaction.
+Fields:
+- Action Name: label this action
+- Reply Type: Reply to Comment via DM | Reply to DM
+- Templates: pull from Marketing → Snippets
+- Message Body: text with Custom Values and Trigger Links
+- Add Attachment: upload file or add via URL (Quick Replies cannot be added in the same message when an attachment is included)
+- Add Buttons OR Quick Replies (not both in one message):
+  - Buttons (persistent, stay visible after click): Open Website | Call Number | Perform Action (creates workflow branch)
+  - Quick Replies (disappear after selection, max 13): one-tap response options that create workflow branches
+- Wait Step: pause duration while waiting for user interaction — contacts who don't respond route to Default Timeout branch
 
 **Reply in Comments**
+Replies to a Facebook or Instagram comment with a comment underneath it. Must be used with Facebook Comment(s) On A Post or Instagram Comment(s) On A Post trigger.
+Fields:
+- Comments: create up to 10 reply variations — system picks randomly. Supports manual text and merge tags from custom values or previous AI action output.
+- Like Comment: toggle ON to like the comment being replied to | OFF to skip liking
+Note: Automatic replies do not re-trigger the comment trigger — no infinite loop risk.
 
 **Send Slack Message**
 
@@ -564,7 +615,18 @@ Fields:
 
 **AI Decision Maker**
 
-**AI Prompt** *(GPT-3 Powered)*
+**AI Prompt** *(GPT Powered by OpenAI)*
+Sends a prompt to a GPT model and returns a completion you can use in later workflow steps.
+Fields:
+- Action Name: label this action
+- Model: GPT 5 | GPT 5.1 | GPT 5 Mini (default) | GPT 5 Nano | GPT 4o | GPT 4 Turbo | GPT 4o Mini
+- Prompt: natural language instruction — supports custom values for dynamic prompts (e.g., `Write a follow-up email for: {{contact.message}}`)
+- Temperature (Advanced): 0.1–1.0 — lower = focused/predictable, higher = creative/random
+Output: `{{chatgpt.1.response}}` — use in subsequent steps
+Output can be:
+- Stored in a Custom Field
+- Used directly in Send Email or Send SMS actions
+- Sent to a team via Webhook or Slack
 
 ---
 

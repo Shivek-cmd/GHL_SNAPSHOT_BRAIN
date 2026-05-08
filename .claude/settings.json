@@ -1,10 +1,12 @@
 {
   "permissions": {
     "allow": [
-      "Read(//d/Watts Company/SnapShots/Dental/**)"
+      "Read(//d/Watts Company/SnapShots/Dental/**)",
+      "Bash(mkdir -p \"d:\\\\Watts Company\\\\GHL_SNAPSHOT_BRAIN\\\\ghl-guides\\\\marketing\\\\social-planner\")"
     ],
     "additionalDirectories": [
-      "D:\\Watts Company\\SnapShots\\Hair Saloon\\custom-values"
+      "D:\\Watts Company\\SnapShots\\Hair Saloon\\custom-values",
+      "d:\\Watts Company\\GHL_SNAPSHOT_BRAIN\\ghl-guides\\marketing"
     ]
   }
 }

@@ -55,15 +55,38 @@ The dashboard landing page. Split into two tabs: **My Stats** and **Competitor A
 
 ### Competitor Analysis
 
-Compare the business against up to 3 competitors.
+Compare the business against up to 3 competitors using real-time review data from Google and other major platforms.
 
-**How to add a competitor:** search by business name or Google address — GHL pulls their public profile data.
+**Setup steps:**
+1. Click + Add Your Business → allow location permission → search and select the business → confirm
+2. Click + Add Competitor (repeat up to 3 times) → search by name or address → confirm
+3. Scroll down to see Rating by Source across Google, Facebook, TripAdvisor, etc.
+
+Data is auto-fetched and refreshed regularly — no manual entry required. Competitors can be changed at any time.
 
 **Comparison Insights:**
 - **Score** — website performance breakdown: load time, mobile optimisation, web vitals
 - **Competitive Grid** — side-by-side comparison of key reputation metrics across all added competitors. Unlimited reports can be built.
 - **Sentiment Heat-map** — visualises customer sentiment by category across the business and competitors
 - **Rating by Source** — shows ratings per platform (Google, Yelp, Facebook, etc.) for each competitor
+
+### Competitor Analysis Report *(via Marketing Audit)*
+
+A separate report that benchmarks business listings and review metrics against up to 3 competitors.
+
+**Where:** Reporting → Local Marketing Audit → Compare Reports tab
+
+**Setup:**
+1. Go to Reporting → Local Marketing Audit → Generate Report (must run this first)
+2. Navigate to Compare Reports tab
+3. Enter up to 3 competitor business names → Click Compare Reports
+4. System auto-generates a comprehensive Competitor Analysis Report
+
+**Report covers:**
+- **Listings Accuracy** — missing, inconsistent, or incorrect listings vs competitors
+- **Reviews Performance** — comparative review volume, star ratings, and sentiment
+
+Note: Exporting is not currently supported — use screenshots or internal sharing within GHL.
 
 ---
 
@@ -92,7 +115,15 @@ View and manage all incoming reviews.
 - Spam toggle
 - Search (keyword)
 
-**AI Summary:** auto-generated summary of the filtered review set. Can be regenerated.
+**AI-Powered Review Summary:**
+Auto-generated insight card that rolls up feedback from all connected review pages into a single summary.
+- Appears as a purple card in both the Reviews tab (left side) and the Overview tab (right side)
+- Includes: overall sentiment paragraph + highlight tags (e.g., "Great service", "Long wait", "Booking system")
+- Tags update dynamically based on active filters
+- **Filter:** click the purple AI Summary button → filter by specific pages/locations + date range
+- **Refresh:** click the refresh icon next to the summary title to regenerate with current data and filters
+- Summaries include both integrated and manually added reviews (if Manual Reviews is enabled)
+- Different from Reviews AI auto-replies — this is analysis only, not response generation
 
 **Review Card shows:**
 - Reviewer initials + name
@@ -104,6 +135,37 @@ View and manage all incoming reviews.
 - Response (if replied) — shows responder name and "Replied By Reviews AI" if AI responded
 
 **Actions per review:** reply manually, mark as spam, flag as not eligible
+
+### Manual Reviews
+
+Add customer feedback collected outside connected platforms (paper forms, emails, calls) directly into GHL.
+
+**Add single review:** Reviews tab → Add Reviews → Add Manually tab
+- Fields: Rating | Review Text | Date | Platform | Profile Picture | Customer Name
+- Click Submit Review
+
+**Bulk import:** Reviews tab → Add Reviews → Upload CSV tab
+- Download CSV template → populate → select platform → Upload Reviews
+
+**CSV format:**
+
+| Column | Format | Example |
+|--------|--------|---------|
+| name | Text | Alice Johnson |
+| comment | Text | Fantastic place — would visit again! |
+| rating | Number (1–5) | 3 |
+| profile photo | Single image URL | https://... |
+| images | Multiple image URLs, comma-separated | https://...,https://... |
+| date | DD-MM-YYYY | 24-06-2023 |
+
+**Display in widgets:** Reputation → Widgets → choose widget → set Review Source to "Manual" → embed
+
+Manual reviews:
+- Appear in Reviews tab with a "Manual Pages" label
+- Are included in AI Summary analysis
+- Can be filtered by Source → Manual Pages
+- Support custom/unlisted platforms (select existing, create custom, or choose No Platform)
+- Can be combined with other sources in widgets
 
 ---
 
@@ -136,26 +198,57 @@ Manages business listings across directories to improve local SEO and online pre
 Controls how GHL automatically responds to incoming reviews.
 
 **Mode — select one:**
-- **Auto Response** — AI replies to reviews automatically without human approval
-- **Suggest** — AI drafts a response for the user to review and send manually
+- **Auto Response (Auto-Pilot)** — AI replies to reviews automatically without human approval. Customise automated responses by star rating, set wait time before sending, add response footers, and tailor auto-responses per source (Facebook, Google, etc.)
+- **Suggest (Suggestive Mode)** — AI drafts a response for the user to review; user clicks AI Reply button to generate, then edits and sends manually. Each regeneration costs $0.01 after the first 3 free trials.
 - **Off** — Reviews AI is disabled
 
 **Wait Time Before Responding:** set a delay in minutes before the AI sends its response after a review comes in.
 
-**Drip Response (for backlog):**
-Automatically reply to old unreplied reviews on a controlled schedule.
-- Campaign Name
-- Only reply to reviews older than: X days
-- Frequency: replies per day (e.g., 10/day)
-- Timing: Daily schedule
-- Time Window (optional): send replies between HH:MM AM and HH:MM PM (local time)
-- Select AI Agent(s): choose which Review AI Agent handles the replies
+### Drip Mode *(Reviews AI backlog campaign)*
+
+Replies to large backlogs of historical unreplied reviews at a paced, human-like cadence.
+
+**Setup:**
+1. Settings → Reviews AI → Create Campaign (or New Drip Campaign)
+2. Name the campaign
+3. Set eligibility: Only Reply to Reviews Older Than X days
+4. Set pace: Replies Per Day (daily cap) | Frequency (daily/weekly/monthly) | Time Window (business hours)
+5. Select AI Agent and tone
+6. Review summary (eligible review count, estimated days to clear) → Click Start
+
+**Campaign controls:**
+- **Edit** — update age threshold, caps, cadence, time window, agent; only affects future scheduled replies
+- **Pause** — halts future sends, preserves settings for resumption
+- **Delete** — cancels all pending replies, permanently removes campaign; sent replies remain in history
+
+**Monitoring:**
+- Scheduled Queue — upcoming replies and next send window
+- Sent History — which reviews were replied to, timestamps, response content
+- Backlog Progress — remaining eligible reviews and estimated days to completion
+- Failures & Retries — identify and action failed sends
+
+**Limits:**
+- Editing does not alter already-sent replies
+- Actual send timing depends on cadence, time window, and daily caps
+- Pausing halts future sends until resumed
 
 ---
 
 ### Review AI Agents
 
-Create custom AI personas for responding to reviews.
+Create custom AI personas for responding to reviews. Currently available to Agency Users only.
+
+**Quick start:** click **Create Starter Agents** to enable all pre-built template agents at once.
+
+**Setup steps:**
+1. Reputation → Settings → Reviews AI → Create Agent
+2. Configure: Agent Name | Tone | Prompt (concise instructions for the agent)
+3. Set Assignment Rules: assign by Review Sentiment (Positive / Neutral / Negative) | enable Round Robin to rotate agents automatically
+4. Configure Language Detection: AI auto-detects review language; set a Fallback Language if detection fails
+5. Optionally assign agent to specific Google Business Pages (useful for multi-location or multi-brand setups)
+6. Save — agent is active
+
+**Agent management:** Edit | Clone | Delete at any time. Preview AI-generated responses before publishing. Each reply card shows which agent crafted the response.
 
 **Preset Agents (built-in examples):**
 - **Claire Flair** — Professional tone. Responds to positive reviews with expertise and authority.
@@ -164,10 +257,11 @@ Create custom AI personas for responding to reviews.
 
 **Custom Agent fields:**
 - Agent Name
-- Agent Instructions (full prompt — tells the AI how to respond)
+- Agent Instructions / Prompt (full instructions for how to respond)
 - Tone (select up to 2): Professional | Funny | Empathetic | Optimistic | Playful | Grateful | Friendly | Concise | Inquisitive | Solution Oriented
 - Language: Dynamic | English (US) | other languages
 - Review Source: All | specific platform
+- Google Business Page assignment (optional)
 
 ---
 
