@@ -541,18 +541,126 @@ Fields:
 **Manual Action**
 
 **Call**
+Initiates a call to the assigned user or a default number and plays a whisper message before bridging to the contact. If the contact is assigned to a user, that user is called. If unassigned, the number in Settings → Company → Company Phone is called. If the receiver presses any number key during the call, the system dials the contact and bridges the two.
+Fields:
+- Action Name: label this action
+- Call Whisper: short message played to the receiver before the call connects — supports Custom Values — plays up to 3 times (TTS billed at $0.00084 per 100 characters)
+- Call Timeout (s): maximum seconds to wait before terminating the call attempt if not connected
+- Disable Voicemail Detect: if ON, skips voicemail detection — eliminates the detection delay but if Stop On Reply is also ON, the workflow stops whether a person or voicemail answers; recommended only for shorter call timeouts
+- Connect Call After Keypress: if ON, the call only bridges to the contact after the receiver presses a key — confirms a live person answered before connecting
+Key notes:
+- Voicemail detection: by default, GHL detects whether a person or voicemail answered — this adds a slight delay. If Stop On Reply is ON and voicemail is detected, the contact continues in the workflow. Disabling detection removes the delay but removes that distinction.
+- Stop On Reply interaction: if the business answers but the contact does not, the workflow carries on regardless of Stop On Reply / Disable Voicemail Detect settings — those settings only apply to the contact side of the call
+Example:
+- Trigger: Appointment Confirmed
+- Action: Call
+- Action Name: "Appointment Call Reminder"
+- Call Whisper: "You have a new appointment scheduled with {{contact.first_name}} at {{appointment.time}}. Press any key to confirm."
+- Call Timeout: 30 seconds
+- Disable Voicemail Detect: ON (for quicker connection)
+- Connect Call After Keypress: ON (ensures a live person answers before bridging)
+
+**Log External Call**
+Records details of a call made or received through a third-party calling tool directly into the contact's CRM record and Conversations section. Use when calls happen outside GHL and need to be centralised in the contact timeline. Typically paired with an Inbound Webhook trigger — use Custom Values to map webhook data into each field.
+Fields:
+- Action Name: label this action
+- Direction: enter call direction — `inbound` or `outbound`
+- Date: date and time in ISO 8601 format — if left blank, current date and time is applied automatically
+- To: receiver's phone number
+- From: dialer's phone number
+- Call Status: allowed values — `completed` | `answered` | `busy` | `no-answer` | `failed` | `canceled` | `voicemail` | `pending`
+- Attachment: call recording URL(s) — separate multiple URLs with a comma; leave blank if no recording
+Key notes:
+- Requires an Inbound Webhook trigger to receive call data from the third-party system — the webhook provides the URL the calling tool posts to on each call event
+- Phone numbers must be correctly mapped to identify or create the right contact — for inbound calls map the From Number to the contact's phone; for outbound calls map the To Number
+- Add an If/Else branch after the trigger to split inbound and outbound calls before logging
+- Add a Create Contact action before Log External Call in each branch so the call is associated with the correct contact record
+- Recordings appear in the contact's Conversations section once logged
+- Incomplete field mappings (missing direction, status, or phone numbers) result in incomplete or missed logs — double-check all Custom Value mappings before publishing
+Example:
+- Trigger: Inbound Webhook (receiving call event from third-party dialer)
+- Branch: If direction = inbound → map From Number to contact phone; if outbound → map To Number
+- Action: Create Contact (map phone from webhook data)
+- Action: Log External Call
+  - Direction: `{{trigger.direction}}`
+  - Date: `{{trigger.date}}`
+  - To: `{{trigger.to}}`
+  - From: `{{trigger.from}}`
+  - Call Status: `{{trigger.status}}`
+  - Attachment: `{{trigger.recording_url}}`
 
 **Messenger**
+Sends a Facebook Messenger message to the contact. The contact must have previously messaged a connected Facebook page no more than 24 hours before reaching this action — required by Facebook's messaging policy for successful delivery.
+Fields:
+- Action Name: label this action
+- Templates: select a pre-configured message template (optional — ensures consistency and compliance with Facebook message format guidelines)
+- Message: the message content — supports Custom Values and dynamic content to personalise per contact
+- Add Attachment: attach files or media (images, documents, promotional content)
+- Add Files through URL: include files hosted online via URL instead of uploading directly
+- Test Phone Number: send a test message to a specified number before finalising the workflow (optional)
+Example:
+- Trigger: Contact Form Submission
+- Condition: Contact form submitted through a Facebook ad campaign
+- Action: Messenger
+- Message: "Thank you for reaching out! We received your inquiry through our Facebook ad. Our team will get back to you shortly."
+- Template: Select a template aligned with the message purpose (if applicable)
+- Add Attachment: Include a brochure or image relevant to the campaign
 
 **Instagram DM**
+Sends a direct message to the contact via Instagram. The contact must have previously messaged a connected Instagram page no more than 24 hours before reaching this action — required by Instagram's messaging policy for successful delivery.
+Fields:
+- Action Name: label this action
+- Templates: select a pre-configured message template (optional — helps maintain consistency and compliance with Instagram guidelines)
+- Message: the DM content — supports Custom Values to personalise per contact
+- Add Attachment: attach files or media (images, documents) to the message
+- Add Files through URL: include files hosted online via URL instead of uploading directly
+Example:
+- Trigger: Instagram Ad Lead Form Submitted
+- Condition: Lead form submitted through a targeted Instagram ad
+- Action: Instagram DM
+- Message: "Thank you for showing interest in our products! We've received your inquiry through Instagram. Stay tuned for more updates."
+- Template: Select a template aligned with the message intent
+- Add Attachment: Attach a product catalog or promotional image
 
 **WhatsApp**
+Sends a WhatsApp message to the contact directly from a workflow. Supports free-form messages within the 24-hour messaging window and pre-approved templates for messages outside it.
+Fields:
+- Action Name: label this action
+- Message Type: WhatsApp Template — select a pre-approved template to send messages outside the 24-hour window; free-form messages only available within the 24-hour window
+- Template: choose from approved WhatsApp templates (must be created and approved before use — see WhatsApp Subaccount Setup)
+- Message content: supports dynamic Custom Values (e.g., `{{contact.first_name}}`, `{{appointment.date}}`) for personalisation
+Key notes:
+- WhatsApp must be enabled and configured on the sub-account before this action works
+- Business-initiated messages outside the 24-hour window require an approved template
+- Free Entry Point Conversations: when a contact replies to a WhatsApp message, a Free Entry Point conversation opens — allows free-form or template messages for up to 72 hours at no additional cost
+- DND: WhatsApp respects DND settings — contacts who opt out will not receive messages
+Example:
+- Trigger: Appointment Reminder
+- Action: WhatsApp
+- Action Name: "Send WhatsApp Appointment Reminder"
+- Message Type: Template — Appointment Reminder
+- Message: "Hi {{contact.first_name}}, this is a reminder for your appointment scheduled on {{appointment.date}}."
+- Outcome: Contact receives a personalised WhatsApp reminder 24 hours before their appointment
 
 **Send Live Chat Message**
 
 **GMB Messaging**
 
 **Conversation AI**
+Sends a single AI-generated message to a contact, waits for their reply, and routes the workflow through branches based on the response. Uses the bot's prompt, training data, and conversation history to craft the message.
+Fields:
+- Action Name: label this action
+- Advanced Bot Configuration (toggle): override the bot's defaults for this action only
+  - Personality: define the tone for this message
+  - Additional Instructions: add goals, intent, or specific guidance; if off, uses the bot's existing configuration
+- Question: the message the AI sends — supports Custom Values
+- Timeout: how long to wait for a reply before routing to the Time Out branch (set in minutes, hours, or days)
+- Channel: select one channel per action — SMS | Facebook | Instagram | WhatsApp | Live Chat
+- Skip if answered: toggle ON to bypass this action if the contact has already replied
+- Bot responses limit: max number of AI messages before routing to No Condition Met if nothing matches
+- Wait time: delay in seconds before the bot replies, allowing incoming messages to arrive first
+- Branches & Conditions: Time Out and No Condition Met are always present and cannot be removed — add additional branches with matching conditions for different reply outcomes
+Note: The AI uses Personality, Additional Instructions, the Question, training data, and conversation history to generate its response.
 
 **Facebook Interactive Messenger**
 Automates Facebook Messenger conversations with interactive buttons and quick replies.
