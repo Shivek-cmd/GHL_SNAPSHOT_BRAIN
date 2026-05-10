@@ -38,7 +38,7 @@
    - Speed and pitch (if available)
 10. **Post-Call Settings:**
     - Call summary — GHL auto-generates a summary on the contact record after each call
-    - Follow-up workflow — fire a workflow when the call ends
+    - Follow-up workflow — select a published workflow to trigger automatically every time a call ends (see Post-Call Workflow section below for full setup)
     - Translation Service — enable to auto-translate transcripts and summaries into a target language
 
 **Outbound calls are triggered by a workflow** — they do not fire automatically. A workflow action "Outbound Call" specifies this Voice AI agent. The outbound welcome message fires at the start of that call.
@@ -191,7 +191,46 @@ Translated transcripts and summaries appear in **Dashboard & Logs** (the homepag
 
 ---
 
-## Technical Constraints
+## Post-Call Workflow
+
+A workflow can be automatically triggered every time a call ends — configured directly inside the agent setup. This is the primary way to automate what happens after a Voice AI call completes, without any manual action.
+
+**Where to configure:** AI Agents → Voice AI → open the agent → Post-Call Settings → select a workflow from the **Follow-up Workflow** dropdown
+
+The selected workflow fires automatically when the call ends, regardless of how the call ended (completed, no-answer, voicemail, transferred, etc.).
+
+### What to Use It For
+
+| Use Case | How |
+|----------|-----|
+| Save call summary to contact notes | Add To Note action → insert `{{voice_ai.summary}}` merge field |
+| Save call transcript to contact record | Add To Note action → insert `{{voice_ai.transcript}}` merge field |
+| Send internal notification to team | Send Email or Internal Notification action with summary/transcript merge fields |
+| Tag contact based on call outcome | Add Contact Tag action |
+| Update a contact field with call result | Update Contact Field action |
+| Enrol contact in a follow-up sequence | Add to workflow / Add to drip campaign |
+| Send follow-up SMS or email to caller | Send SMS / Send Email action |
+| Trigger CRM update or external webhook | Custom Webhook action |
+
+### How to Set Up
+
+1. Automation → Workflows → Create new workflow
+2. Leave the workflow without a standard trigger — it will be called directly from the Voice AI agent
+3. Add the actions you want to happen post-call (notes, tags, emails, field updates, webhooks)
+4. Use Voice AI merge fields where relevant: `{{voice_ai.summary}}` and `{{voice_ai.transcript}}`
+5. Publish the workflow
+6. Return to AI Agents → Voice AI → open the agent → Post-Call Settings → select this workflow from the dropdown → Save
+
+> The workflow must be published before it appears in the dropdown.
+
+### Key Notes
+
+- One post-call workflow per agent — if multiple automations are needed, build them all inside a single workflow using multiple actions or sub-workflows
+- The workflow fires after every call — if conditional logic is needed (e.g., only act on completed calls, not voicemails), add an If/Else branch at the start of the workflow using call status or tag data
+- If Translation Service is enabled, both translated and original summary/transcript are available as merge fields in the post-call workflow
+- The post-call workflow is separate from the **Trigger Workflow** action configured inside Agent Goals — Agent Goals actions fire during the call based on conversation conditions; Post-Call Workflow fires after every call regardless of what was said
+
+---
 
 ## Technical Settings Reference
 
