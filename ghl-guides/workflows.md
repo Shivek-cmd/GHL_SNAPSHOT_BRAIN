@@ -716,8 +716,43 @@ Note: Automatic replies do not re-trigger the comment trigger — no infinite lo
 **AI — Premium Actions** *(each execution incurs an additional charge)*
 
 **AI Translate**
+Automatically translates text from a source language to a target language within a workflow. Used to personalize communications for multilingual audiences — translate an incoming message, then pass the output to a subsequent email, SMS, or notification action.
+
+Fields:
+- Action Name: label this action (e.g., "Translate Welcome Email to Spanish")
+- From Language: the source language the input text is written in (e.g., English)
+- To Language: the target language to translate into (e.g., French)
+- Input Text: the content to translate — supports static text or Custom Variables from contact fields or prior workflow steps (e.g., `{{contact.message}}`)
+
+Output: translated text is stored as a custom variable usable in all subsequent actions:
+`{{workflow_ai_translate_content.INDEX.response}}` — where INDEX is the step number of this action
+
+Example:
+- Trigger: Contact Created
+- Action: AI Translate — From: English / To: French / Input: "Hello, thank you for signing up!"
+- Action: Send Email — Body includes `{{workflow_ai_translate_content.2.response}}`
+- Result: French-speaking contact receives a correctly translated welcome message automatically
 
 **AI Summarize**
+Condenses long content into a concise summary of a specified length using AI. Preserves key points while removing redundant information — useful for converting verbose form submissions, notes, reviews, or transcripts into SMS-friendly or exec-ready summaries.
+
+Fields:
+- Action Name: label this action (e.g., "Summarize Customer Review")
+- Max Length Input: specify the desired output length — options:
+  - Number of words (e.g., 50 words)
+  - Number of characters (e.g., 280 characters)
+  - Number of sentences (e.g., 3 sentences)
+  - Number of paragraphs (e.g., 1 paragraph)
+- Input Text: the content to summarize — supports static text or Custom Variables from contact fields or prior workflow steps
+
+Output: summarized text stored as a custom variable usable in subsequent actions (send email, SMS, store in custom field, pass to another action)
+
+Common use cases:
+- SMS confirmation: summarize detailed appointment notes to 160 characters, send via SMS
+- Pipeline update: summarize opportunity notes to 1 paragraph, email to account manager on stage change
+- Review digest: summarize a Google/Facebook review to 50 words, post to a Slack channel
+- Meeting notes: condense a full transcript to 1 paragraph for stakeholder distribution
+- Chain summaries: summarize to 500 words first, then summarize that output again to 100 words in a second action
 
 **AI Intent Detection**
 
@@ -843,7 +878,90 @@ Fields:
 
 **Webhook / Custom Webhook**
 
-**Google Sheets**
+**Google Sheets** *(Premium Action — $0.01 per execution)*
+Integrates Google Sheets directly into workflows, automating data transfers between GHL and a connected Google Sheet without third-party tools. Supports creating, looking up, updating, and deleting rows.
+Prerequisites:
+- Google account integrated with the GHL subaccount
+- Google Sheet prepared with clearly defined headers in the first row
+- Premium Triggers & Actions enabled on the Agency account and Subaccount
+
+Basic setup fields (shared across all functions):
+- Choose An Account: select the integrated Google account
+- Choose a Drive: select the Google Drive containing the target sheet
+- Choose a Spreadsheet: select the specific spreadsheet
+- Choose a Worksheet: select the specific tab/worksheet within that spreadsheet
+- Refresh Headers: fetches the latest first-row headers — use after renaming columns in Google Sheets
+- Select Columns: include all columns or define a starting and ending column range
+
+Functions:
+
+**Create Spreadsheet Row**
+Adds a new row at the end of the spreadsheet.
+Fields:
+- Account, Drive, Spreadsheet, Worksheet (as above)
+- Starting Column / Ending Column: define the column range to write into
+- Column values: map each column header to a value — supports Custom Values (e.g., `{{contact.first_name}}`, `{{contact.email}}`)
+Note: New rows are always appended after the last existing row.
+
+**Create Multiple Spreadsheet Row(s)**
+Adds one or more new rows in a single action execution.
+
+**Lookup Spreadsheet Row**
+Finds the first row matching a search criteria. Matched row data is stored as custom variables usable in later steps.
+Fields:
+- Worksheet: select the worksheet to search
+- Search Order: From the Top (returns first match) | From the Bottom (returns most recent match)
+- Lookup Column + Lookup Value: the column to search and the value to match (e.g., Email = `{{contact.email}}`)
+- Extra Column + Extra Lookup Value (optional): adds a second condition — both must match
+- Create row if not found (toggle): when ON, fires a Create Spreadsheet Row action if no match is found (logged and charged separately)
+Output: All matched row values stored as `{{sheet.INDEX.HEADER}}` variables — e.g., `{{sheet.1.email}}`. Use `{{sheet.1.rowNumber}}` to get the matched row's number.
+Note: If no match is found, all subsequent actions referencing this lookup are skipped. Use an If/Else after the lookup to branch on whether a result exists.
+
+**Lookup Multiple Spreadsheet Row(s)**
+Same as Lookup Spreadsheet Row but returns multiple rows. Add a Row Count field to specify how many rows to retrieve.
+
+**Update Specific Spreadsheet Row**
+Updates data in a row identified by its row number.
+Fields:
+- Worksheet: select worksheet
+- Row Number: the exact row to update — supports Custom Values (use `{{sheet.INDEX.rowNumber}}` from a prior Lookup)
+- Starting Column / Ending Column: define the column range to update
+- Column values: map headers to new values — leave blank to skip updating that column
+
+**Update Spreadsheet Row Using Lookup**
+Finds a row via a prior Lookup action and updates its values. Requires a Lookup action placed above this action in the workflow.
+Fields:
+- Select Lookup Action: choose the Lookup action to reference (only Lookup actions above this step are listed)
+- Starting Column / Ending Column: define the range to update
+- Column values: map headers to new values — leave blank to skip
+Note: If the Lookup returned no rows, this action is skipped automatically.
+
+**Update Multiple Spreadsheet Row(s)**
+Updates multiple rows in a single action.
+
+**Delete Specific Spreadsheet Row**
+Clears all values in a row identified by its row number. The row itself is not removed — only its contents are cleared.
+Fields:
+- Worksheet: select worksheet
+- Row Number: exact row to clear — supports Custom Values
+
+**Delete Spreadsheet Row Using Lookup**
+Finds a row via a prior Lookup action and clears its contents. Requires a Lookup action placed above this action in the workflow.
+Fields:
+- Select Lookup Action: choose the Lookup action to reference
+Note: If the Lookup returned no rows, this action is skipped automatically. Row is cleared, not deleted.
+
+Common patterns:
+- To update or delete using a lookup: add Lookup → then Update/Delete Using Lookup
+- To upsert (create if not exists): use Lookup with "Create row if not found" toggled ON
+- To branch on lookup result: add If/Else after Lookup, condition on `{{sheet.1.rowNumber}}` existing
+- To get row number for update/delete: use `{{sheet.INDEX.rowNumber}}` from Lookup output
+
+Troubleshooting:
+- Headers renamed in Google Sheets → click Refresh Headers in HighLevel and reconfigure column mappings
+- Google account not appearing → reauthorize the Google account in HighLevel
+- Spreadsheet not listed → confirm the correct account and Drive permissions are selected
+- Lookup-dependent actions being skipped → Lookup returned no match; add If/Else to handle the no-result branch
 
 ---
 
@@ -852,18 +970,166 @@ Fields:
 **If / Else**
 
 **Wait**
+Holds a contact in the workflow until a time condition is met or a CRM event occurs. Controls when the next steps fire so communications are timely and relevant.
 
-**Wait Until**
+Wait types:
+
+| Wait For | Standard Settings | Advanced Settings |
+|---|---|---|
+| Time Delay | Wait [number] [minutes / hours / days] | Resume on [day of week]; Resume [window] [start–end]; Resume [exact] [time] |
+| Event / Appointment Time | Until [exact time]; After [months + days + hours + minutes]; Before [months + days + hours + minutes] | If already in the past: Next Step / Specific Step / Skip All |
+| Overdue (invoice due date) | Until [exact time]; After / Before [months + days + hours + minutes] | If already in the past: Next Step / Specific Step / Skip All |
+| Condition | Multiple Segments (AND/OR) → Multiple Conditions (AND/OR) on any field | Timeout: ON/OFF — [number] [minutes / hours / days] |
+| Contact Reply | Reply on channel (Email, SMS, etc.) — requires a prior send action on that channel | Timeout: ON/OFF — [number] [minutes / hours / days] |
+| Trigger Link Clicked | Select trigger link | Timeout: ON/OFF — [number] [minutes / hours / days] |
+| Email Events | Select [prior email send action] + [opened / clicked / unsubscribed / complained / bounced] | Timeout: ON/OFF — [number] [minutes / hours / days] |
+
+Key settings:
+- Action Name: label this wait step for easy identification in the builder
+- Resume On: choose specific days to resume (e.g., weekdays only)
+- Resume Between Hours: define a time window for resuming (e.g., 9 AM–5 PM)
+- Advanced Window: if the resume condition fires outside the allowed window (e.g., contact replies on Saturday), holds until the window opens
+- Additional Filters: layer date/time conditions for personalized workflows (e.g., wait until contact's birthday)
+
+Conditions and Segments (Wait for Condition):
+- Conditions are individual rules (e.g., "Tag is VIP", "Custom field equals Yes")
+- Segments are groups of conditions evaluated together with AND/OR logic
+- A contact exits the Wait when any one Segment evaluates as true (Segments use OR between each other)
+- Use Add Condition to build rules, Add Segment to create grouped logic blocks
+
+If already in the past (Event/Appointment/Overdue wait types):
+- Next Step: skips the wait and continues to the next action
+- Specific Step: jumps to a chosen step
+- Skip All: exits all remaining workflow steps
+
+Timeout (CRM Event wait types):
+- Always add a Timeout to Condition, Contact Reply, Trigger Link, and Email Event waits — contacts with no timeout can remain paused indefinitely if the event never occurs
+
+Workflow AI Builder: supports conversational edits for Wait actions — update time delays, window settings, reply conditions, add/remove timeout branches, and convert between wait types without switching to manual config.
+
 
 **Goal Event**
+Tracks a specific milestone or contact behavior (click, form submit, appointment, payment, etc.) and automatically moves the contact to the goal step the moment the condition is met — regardless of where they are in the workflow. Replaces complex If/Else branching for common "did they do X yet?" patterns.
+Note: Only one Goal Event action can be added per workflow. Multiple criteria can be configured inside that single action.
+
+Supported goal types:
+
+| Goal Type | Triggers When |
+|---|---|
+| Form Submitted | Contact submits any selected form (multi-select) |
+| Payment Received | Payment event fires — filter by success/failure status and by product |
+| Document Status | Document reaches: Viewed, Signed, Declined, or Completed |
+| Email Events | Contact opens, clicks, unsubscribes, complains, or email bounces |
+| Trigger Link Clicked | Contact clicks a specific tracked trigger link |
+| Tag Added or Removed | A specific tag is added to or removed from the contact |
+| Appointment Status | Appointment changes to: New, Confirmed, Showed, No-Show, etc. |
+
+Configuration fields:
+- Action Name: label this goal step (e.g., "Lead Conversion Goal")
+- Select Type of Goal: choose the goal type from the list above
+- Goal criteria: define the specific event — which form, which link, which tag, which status
+- If contact reaches this goal step without meeting conditions:
+  - End this workflow — stops the contact here
+  - Continue anyway — moves contact forward regardless
+  - Wait until the goal is met — holds the contact at this step until the condition is satisfied
+
+How it works:
+- The system continuously monitors all active contacts in the workflow for the goal condition
+- The moment any contact meets the condition (even mid-wait or mid-sequence), they jump to the goal step immediately
+- A contact will not be evaluated for the same goal event twice within the same workflow
+- Goal Events fire outside business hours — monitoring is continuous
+- A single contact event (e.g., email open) can meet goal conditions across multiple workflows simultaneously
+
+Common use cases:
+- Skip remaining nurture steps the moment a contact books an appointment
+- Stop a follow-up sequence the instant payment is received
+- Branch contacts who click a specific link into a targeted sub-sequence
+- Move contacts forward when a contract is signed without waiting for a timed step
 
 **Split**
+Divides contacts into different workflow paths based on random percentage distribution. Used for A/B testing, lead routing, and campaign optimization.
+Note: Split only supports random distribution — it has no criteria-based logic. To split contacts by a condition (e.g., order size, tag, field value), use If/Else instead.
+
+Configuration fields:
+- Action Name: label this action
+- Distribution Type: Random Split (only option)
+- Paths: add 2–5 named paths, each with a percentage weight
+  - All path percentages must sum to exactly 100% — the builder blocks saving if they don't
+  - A path can be set to 0% (no contacts routed there) as long as the total still equals 100%
+
+Key rules:
+- Once a contact is assigned to a path, they stay on that path — re-entering the same split sends them down the same path again, not a new random assignment
+- Changes to split percentages only apply to contacts entering the action after the change
+- Statistics tab on the action shows how many contacts entered each path and the total
+
+Common use cases:
+- A/B testing: 50/50 split to test two email subject lines or SMS copy variations
+- Lead routing: 75% to a senior rep, 25% to a trainee
+- Campaign optimization: run variant sequences in parallel, then consolidate the winner
 
 **Go To**
+Jumps a contact from the current position in a workflow to another action step within the same workflow. Used to loop contacts back through earlier steps or redirect them to a different branch without duplicating actions.
+Constraint: Go To can only be placed as the last step of a workflow or branch — it cannot be inserted between existing actions.
+
+Configuration:
+- Action Name: label this action (e.g., "Go To — Wait Step")
+- Target step: after saving, all other actions in the workflow are highlighted — click the target action to link it
+- Disconnect: click the "Disconnect GoTo" icon on the action to unlink and re-select a different target step
+
+Common use cases:
+- Loop a contact back to a Wait step if a condition was not yet met (e.g., re-check every day until a tag is added)
+- Skip a contact past steps in a branch they've already satisfied (e.g., jump from Branch 1 directly to a shared Wait in Branch 2)
+- Retry a sequence segment without creating a separate workflow
 
 **Remove from Workflow**
+Automatically removes a contact from one or more workflows based on a trigger or condition. Keeps workflows clean by ensuring contacts only remain in automations relevant to their current status.
+
+Configuration fields:
+- Action Name: label this action (e.g., "Remove from Marketing Campaign Workflow")
+- Workflow Removal Option:
+  - Current Workflow — removes the contact from the workflow this action lives in
+  - Another Workflow — removes the contact from a specific workflow you select
+  - All Except Current Workflow — removes the contact from every active workflow except the one currently executing
+  - All Workflows — removes the contact from every active workflow, including the current one
+
+Key rules:
+- Removal is immediate and cannot be automatically undone — the contact must be manually re-enrolled if needed
+- Contacts are not notified when removed — the action only affects internal workflow state
+- Commonly placed after a purchase, booking, or tag event to stop nurture or marketing sequences
 
 **Drip Mode**
+Regulates the flow of contacts through a workflow by releasing them in batches at set intervals. Instead of all contacts advancing simultaneously, Drip processes them in controlled groups — critical for high-volume email/SMS campaigns, protecting deliverability, and staying within API/sending limits.
+
+Configuration fields:
+- Action Name: label this action
+- Batch Size: number of contacts to release per interval — any value from 1 to 10,000
+- Drip Interval: how often each batch releases — minutes (1–60), hours (1–24), or days (1–7)
+
+Drip Preview (first-time setup):
+- A live schedule table shows the projected send time for each batch (up to 10 batches) before publishing
+- If a Workflow Time Window is active (e.g., 8 AM–7 PM Mon–Fri), an inline warning appears — some batches may be shifted to the next available slot
+- Preview is hidden when editing a Drip action that already has contacts queued in it
+
+Action Statistics (published workflow):
+- Click the statistics icon on the Drip action (blue icon showing contacts waiting) to open a detailed batch view
+- Shows: summary cards (contacts in drip, next batch, ETA), full batch schedule table, status per batch, and active time window constraints
+- Available controls: move contact to next step, delete contact from drip, contact hyperlink
+- If drip settings were changed after contacts entered, a warning shows how many contacts are using old vs. new settings
+
+Batch size change behavior:
+- Changes to batch size or interval apply only to contacts entering the Drip action after the change
+- Contacts already queued continue using the previous settings
+- An informational note appears in the builder when editing settings on a workflow with contacts already in the drip
+
+Draft / Publish behavior:
+- If a workflow moves to Draft while contacts are sitting in a Drip action, those contacts are automatically paused
+- When the workflow is re-published, the drip resumes from where it left off — contacts do not burst out all at once
+- This preserves pacing and protects sender reputation
+
+Key rules:
+- New contacts entering mid-drip start their own drip schedule — they do not join an in-progress batch
+- Drip works with any action type: email, SMS, task assignment, webhook, etc.
+- Always pair with a Workflow Time Window if your sends must respect business hours
 
 **Arrays**
 
