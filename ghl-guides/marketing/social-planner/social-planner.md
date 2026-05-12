@@ -290,6 +290,79 @@ Track approval links created from Content → Approval.
 
 ---
 
+## Instagram — Connection & Post Sync
+
+---
+
+### Connecting Instagram: Facebook-Linked vs. Direct Integration
+
+Instagram can be connected to Social Planner using one of two methods. Choose based on the account type and what features are needed.
+
+**Before connecting — requirements:**
+- Instagram profile must be a **Business** or **Creator** account (personal accounts not supported)
+- If using Facebook-Linked method: must have Admin or Editor role on the linked Facebook Page
+- If the Page lives in Facebook Business Manager: also need management access inside Business Manager
+
+| Feature | Facebook-Linked (Classic) | Direct Integration (Recommended) |
+|---|---|---|
+| Requires a Facebook Page | Yes | No |
+| Supports Creator Accounts | Limited | Yes |
+| Auto-post Stories | No | Yes |
+| Schedule Reels | Yes | Yes |
+| View Engagement Metrics | Yes | Yes (view counts excluded by Instagram API) |
+| Setup Complexity | Higher — multiple logins | Lower — single Instagram login |
+
+> Important: Even with Direct Integration, Instagram/Facebook (not GHL) still requires the underlying profile to be either a Business profile linked to a Facebook Page, or a Creator profile. This is a Meta platform requirement — GHL cannot bypass it.
+
+**Method 1 — Facebook-Linked (Classic):**
+Use this if legacy Facebook permissions or video/image view count analytics are needed.
+1. Link Instagram to Facebook Page first: Facebook → Page Settings → Linked Accounts → Instagram → Connect Account
+2. In GHL: Marketing → Social Planner → Settings (gear icon) → Add Socials → Instagram → **Instagram with Facebook**
+3. Follow prompts to authorize both accounts
+
+**Method 2 — Direct Instagram Integration (Recommended):**
+Use this for Creator accounts, Story auto-posting, or faster setup without Facebook.
+1. Marketing → Social Planner → Settings (gear icon) → Add Socials → Instagram → **Direct Instagram Integration**
+2. Grant Instagram permissions and select the Business or Creator account
+
+> Note: Instagram does not allow clickable links in post captions (native app or Graph API restriction). Any link in a caption publishes as plain text.
+
+---
+
+### Instagram Post Sync
+
+> **Labs feature** — must be enabled by Agency for Sub-accounts before it appears.
+
+Automatically imports existing Instagram posts into Social Planner so past content and engagement data are visible alongside scheduled posts — no manual recreation needed.
+
+**What syncs:**
+- Posts from the **last 30 days** only
+- Content types: images, videos, carousels, reels
+- Insights refresh every **24 hours** (not real-time)
+
+**Limitations (Instagram API restrictions):**
+- Location tags, collaborator details, and mentions may not be available
+- Deleted posts on Instagram still appear in Social Planner — sync is one-way
+- Only Instagram Professional accounts (Business or Creator) are supported
+
+**How to enable — Method 1 (during account connection):**
+1. Marketing → Social Planner → **+ Socials**
+2. In the Connect Socials popup, toggle **Sync Posts Automatically** ON
+3. Connect Instagram and complete account authorization
+
+**How to enable — Method 2 (account already connected):**
+1. Marketing → Social Planner → **Settings**
+2. Social Accounts → Instagram
+3. Enable the **Sync Posts** toggle for the relevant account
+4. Sync runs in the background automatically
+
+**After enabling:**
+- Open **Planner** to see synced historical posts in the calendar
+- Open **Statistics** to see synced performance data
+- If a disconnect or expired-access message appears, follow the reconnect prompt — sync pauses until the account is reconnected
+
+---
+
 ## Creating Posts
 
 ### Post Composer (standard post)
