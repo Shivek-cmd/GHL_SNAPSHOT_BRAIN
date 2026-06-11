@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Read(//d/Watts Company/SnapShots/Dental/**)",
-      "Bash(mkdir -p \"d:\\\\Watts Company\\\\GHL_SNAPSHOT_BRAIN\\\\ghl-guides\\\\marketing\\\\social-planner\")"
+      "Bash(mkdir -p \"d:\\\\Watts Company\\\\GHL_SNAPSHOT_BRAIN\\\\ghl-guides\\\\marketing\\\\social-planner\")",
+      "WebFetch(domain:help.gohighlevel.com)"
     ],
     "additionalDirectories": [
       "D:\\Watts Company\\SnapShots\\Hair Saloon\\custom-values",

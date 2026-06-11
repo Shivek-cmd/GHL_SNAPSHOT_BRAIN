@@ -277,29 +277,72 @@ Filters:
 
 **Courses**
 
-**Category Started**
-
-**Category Completed**
-
-**Lesson Started**
-
-**Lesson Completed**
-
 **New Signup**
+Fires when a new member account is created — their first enrollment in any offer (via purchase, manual grant, or workflow).
+Filters:
+- Offer: Is | Is Not → select offer name
+- Product: Is | Is Not → select product name
 
 **Offer Access Granted**
+Fires when a contact is granted access to a specific offer — whether via purchase, manual admin grant, or the Course Grant Offer workflow action.
+Filters:
+- Offer: Is | Is Not → select offer name
 
 **Offer Access Removed**
+Fires when a contact's access to an offer is revoked — whether manually or via the Course Revoke Offer workflow action.
+Filters:
+- Offer: Is | Is Not → select offer name
 
 **Product Access Granted**
+Fires when access to a specific product is granted to a contact.
+Filters:
+- Product: Is | Is Not → select product name
 
 **Product Access Removed**
+Fires when access to a specific product is removed from a contact.
+Filters:
+- Product: Is | Is Not → select product name
 
 **Product Started**
+Fires when a member opens their first lesson inside a product (first engagement with that product).
+Filters:
+- Product: Is | Is Not → select product name
 
 **Product Completed**
+Fires when a member completes 100% of posts inside a product. Use this to issue certificates, send completion emails, grant bonus offers, or move a pipeline stage.
+Filters:
+- Product: Is | Is Not → select product name
+
+**Category Started**
+Fires when a member opens the first lesson inside a specific category/module.
+Filters:
+- Product: Is | Is Not → select product name
+- Category: Is | Is Not → select category name
+
+**Category Completed**
+Fires when a member completes all posts inside a specific category/module.
+Filters:
+- Product: Is | Is Not → select product name
+- Category: Is | Is Not → select category name
+
+**Lesson Started**
+Fires when a member opens a specific post/lesson.
+Filters:
+- Product: Is | Is Not → select product name
+- Category: Is | Is Not → select category name
+- Post: Is | Is Not → select post name
+
+**Lesson Completed**
+Fires when a member marks a specific post/lesson complete (clicks "Complete & Continue").
+Filters:
+- Product: Is | Is Not → select product name
+- Category: Is | Is Not → select category name
+- Post: Is | Is Not → select post name
 
 **User Login**
+Fires each time a member logs into the membership portal. Use for re-engagement detection — pair with a Wait + Condition to identify members who haven't logged in recently.
+Filters:
+- Offer: Is | Is Not → select offer name
 
 ---
 
@@ -450,20 +493,41 @@ Note: Automatic comments posted by workflow actions do not re-trigger this workf
 **Communities**
 
 **Group Access Granted**
+Fires when a contact is given access to a community group — whether via manual admin action, invite acceptance, paid group purchase, or the Grant Group Access workflow action.
+Filters:
+- Group: Is | Is Not → select group name
 
 **Group Access Revoked**
+Fires when a contact's access to a community group is removed — whether manually or via the Revoke Group Access workflow action. Also fires on subscription cancellation for Paid Groups.
+Filters:
+- Group: Is | Is Not → select group name
 
 **Private Channel Access Granted**
+Fires when a contact is added to a private channel inside a community group.
+Filters:
+- Group: Is | Is Not → select group name
+- Channel: Is | Is Not → select channel name
 
 **Private Channel Access Revoked**
+Fires when a contact is removed from a private channel inside a community group.
+Filters:
+- Group: Is | Is Not → select group name
+- Channel: Is | Is Not → select channel name
 
 **Community Group Member Leaderboard Level Changed**
+Fires when a community member advances to a new gamification level (points-based progression). Use to send congratulations, deliver level rewards, or unlock course access.
+Filters:
+- Group: Is | Is Not → select group name
+- Level: Greater Than | Equals To → enter level number (1–9)
 
 ---
 
 **Certificates**
 
 **Certificates Issued**
+Fires when GHL generates a certificate for a member upon reaching the product completion threshold (set on the certificate template). Use to send the certificate download link, add a completion tag, or move a pipeline stage.
+Filters:
+- Certificate: Is | Is Not → select certificate name from the list
 
 ---
 
@@ -847,8 +911,36 @@ Fields:
 **Courses**
 
 **Course Grant Offer**
+Grants a contact access to a membership offer without requiring payment. The contact receives immediate access to all products included in that offer.
+Fields:
+- Action Name: label this action
+- Offer: select the offer to grant access to (only published offers appear in the list)
+- Access Expiry: Lifetime | Custom Date | Days After Enrollment
+Key notes:
+- This is the primary action for automating enrollment after a purchase, form submission, or any other trigger
+- If a welcome email is built inside this workflow, GHL automatically disables the default Welcome Email from Membership settings — use only one welcome email method
+- Fires the Offer Access Granted trigger in any workflow that is listening for it
+- Contacts already enrolled in the offer receive the grant again — if the offer has time-limited access, their access start date resets
+Common use cases:
+- Grant course access after a payment is received (Source = Memberships)
+- Enroll a contact in a free course after they submit a form
+- Grant a bonus offer when a contact completes a primary course (triggered by Product Completed)
+- Re-grant access when an offer is updated with new products
 
 **Course Revoke Offer**
+Removes a contact's access to a membership offer. Their progress data is retained — only access is removed.
+Fields:
+- Action Name: label this action
+- Offer: select the offer to revoke access from
+Key notes:
+- Fires the Offer Access Removed trigger in any workflow listening for it
+- Does not delete progress — if access is re-granted later, the member's progress history is still there
+- Subscriptions in Payments → Subscriptions are NOT automatically cancelled when access is revoked here — cancel the subscription separately in Payments if needed
+Common use cases:
+- Revoke access when a subscription payment fails
+- Remove access when a trial period ends without conversion
+- Remove access when a contact is offboarded or refunded
+- Time-gate a course by granting access on day 0 and revoking on day X via a Wait + Revoke pattern
 
 ---
 
@@ -869,8 +961,34 @@ Fields:
 **Communities**
 
 **Grant Group Access**
+Adds a contact to a specified community group. The contact receives access as a Contributor (default member role) unless role is changed manually after enrollment.
+Fields:
+- Action Name: label this action
+- Group: select the community group to grant access to
+Key notes:
+- Fires the Group Access Granted trigger in any workflow listening for it
+- For Private Groups, the contact is added directly without requiring admin approval — workflows bypass the approval flow
+- The contact must have a valid email address to receive the community invitation / login link
+Common use cases:
+- Add a contact to a free community group when they submit a lead form
+- Add a paying member to a private group after a successful payment
+- Grant community access as part of an onboarding sequence after course enrollment
+- Move a member to a higher-tier group when they complete a course or reach a leaderboard level
 
 **Revoke Group Access**
+Removes a contact from a specified community group. Their posts and comments remain in the group — only access is removed.
+Fields:
+- Action Name: label this action
+- Group: select the community group to revoke access from
+Key notes:
+- Fires the Group Access Revoked trigger in any workflow listening for it
+- Does not ban the contact — they can request to rejoin unless separately banned
+- For Paid Groups: cancelling a subscription in Payments fires this automatically; use this action if you need to revoke access based on a different condition
+Common use cases:
+- Remove a contact from a private group when their subscription is cancelled
+- Downgrade a member from a premium group to a free group on plan change
+- Remove access during offboarding or refund processing
+- Time-gate community access by granting on day 0 and revoking on day X
 
 ---
 
