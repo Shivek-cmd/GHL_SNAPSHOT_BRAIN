@@ -1,4 +1,4 @@
-# GHL Guide — Rentals
+uestio# GHL Guide — Rentals
 
 **Where in GHL:** Calendars → Calendar Settings → Rentals tab
 
@@ -9,6 +9,8 @@
 Rentals is a distinct booking module inside GHL's Calendars for businesses that rent out items, spaces, or equipment by the hour, day, week, or month. It is separate from the Services and standard calendar systems.
 
 **Use cases:** Property rentals, vehicle rentals, equipment rentals, studio time, room rentals, gear rental companies.
+
+> **When NOT to use Rentals:** If your business has staff (engineers, technicians, therapists) whose individual availability determines whether a booking can be made — use Services v2 instead. Rentals has no staff concept. All availability is controlled by the listing's hours and inventory only. If an engineer is sick and Studio A should be unavailable, Rentals cannot reflect this automatically — you would have to manually block the time. Services v2 checks staff availability automatically per booking.
 
 **Key capabilities:**
 - Flexible booking periods (hourly, daily, weekly, monthly)

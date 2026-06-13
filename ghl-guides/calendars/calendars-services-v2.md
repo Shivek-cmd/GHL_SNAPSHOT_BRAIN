@@ -1,6 +1,6 @@
-# GHL Guide — Services v2, Service Menus, Rooms & Equipment
+# GHL Guide — Services v2
 
-**Where in GHL:** Calendars → Calendar Settings → Services tab (Services v2) | Service Menu tab | Rooms tab | Equipment tab
+**Where in GHL:** Calendars → Calendar Settings → Services tab
 
 ---
 
@@ -10,16 +10,80 @@ Services v2 is a purpose-built booking system for service businesses that need a
 
 **Key advantages over standard Service Calendars:**
 - Multiple payment processors (Stripe, Square, Razorpay, Authorize.net, NMI)
-- Variations (multiple versions of the same service at different prices)
-- Add-ons (optional extras customers select at booking)
-- Resources (rooms, equipment managed per service)
-- Category organization
-- Dedicated staff configuration with hierarchical availability
-- More flexible pricing and checkout
+- Variations (multiple versions of the same service at different prices/durations)
+- Add-ons (optional extras customers select at booking — upsells at checkout)
+- Multi-service checkout — customers book multiple services in one transaction (cart)
+- Coupon codes and promotions
+- Card-on-file payment processing
+- Staff-specific pricing — individual staff members can have different prices for the same service
+- Resources (rooms + equipment managed per service via Resources tab)
+- Category organization for the booking page
+- Dedicated staff configuration with hierarchical availability (3-tier)
+- Multi-location support
+- Built-in appointment reporting and analytics
+- Branded booking page customization
 
-**How to enable:** Services v2 must be enabled per sub-account. Once enabled, it coexists with existing calendars — existing bookings and calendar types are unaffected.
+**How to enable:** Activate per sub-account via Agency View → Subaccounts → select account → Calendar Settings → enable Services module. Once enabled, existing service calendars automatically transfer. Both legacy calendars and v2 Services can run simultaneously.
 
 **Current payment processor support:** Stripe, Square, Razorpay, Authorize.net, NMI
+
+---
+
+## Services v2 — Customer Booking Flow (How It Works)
+
+Services v2 does NOT use Calendar Groups or the v1 Service Menu. It has its own booking system.
+
+```
+Services v2 Booking Flow:
+
+Services tab → Services are created → Auto-published to booking page
+
+Customer accesses via:
+1. Public Booking Page  → shows ALL active services grouped by category
+2. Individual Service URL → direct link to one specific service
+3. Category URL → shows only services in that category
+```
+
+**Finding your booking page:**
+Calendars → Calendar Settings → Services tab → **View Booking Page** button
+
+**Sharing options:**
+- Public page URL → all services visible
+- Individual service URL → set via Custom URL field during service creation
+- Category URL → generated per category
+
+**This replaces Calendar Groups + Service Menu entirely for v2 builds.**
+
+---
+
+## Critical: Variations vs Separate Services for Tier Gating
+
+This is a design decision that must be made before building.
+
+**Variations** = multiple price/duration options inside one service. All variations are visible to EVERYONE on the booking page. Customer picks which one they want.
+
+**Use Variations when:** You WANT the customer to choose (e.g., 60-min vs 90-min session, economy vs premium).
+
+**Do NOT use Variations for membership tier pricing.** If a Gold member should never see VIP pricing — variations break this. There is no native way in GHL to hide a variation based on who is logged in.
+
+**The correct approach for tier gating:**
+
+Create separate services per tier. Each service has its own URL. The portal reads the contact's tag and sends them to only their tier's service URL.
+
+```
+❌ Wrong approach (variations):
+  Service: Studio A Recording
+    → Variation: Non-Member $160  ← VIP can see this
+    → Variation: Gold $120        ← Non-Member can see this
+    → Variation: VIP $80          ← Gold can see this
+
+✅ Correct approach (separate services):
+  Service: Studio A — Non-Member  → URL: /studio-a-non-member  → share with Non-Members only
+  Service: Studio A — Gold        → URL: /studio-a-gold        → share with Gold only
+  Service: Studio A — VIP         → URL: /studio-a-vip         → share with VIP only
+```
+
+With 5 service types × 3 tiers = **15 services total**. More to build upfront but tier gating is clean and native. No custom portal logic needed for the basic gating.
 
 ---
 
@@ -53,6 +117,8 @@ Services v2 is a purpose-built booking system for service businesses that need a
 | Price | Base price |
 | Currency | Set per service |
 | Payment Processor | Select from enabled processors for this sub-account |
+| Card-on-File | Save customer card for future charges without capturing payment now |
+| Coupon Codes | Enable to allow customers to apply discount codes at checkout |
 | Security Deposit | Optional; requires global setting to be enabled |
 
 ### Step 4 — Variations
@@ -78,7 +144,36 @@ Optional extras customers can select during booking.
 Example: "Aromatherapy add-on — $15, +10 min"
 
 ### Step 6 — Resources
-Link Rooms and Equipment to this service so availability is checked against physical resources at booking time. See Rooms and Equipment sections below.
+Resources are physical assets (rooms, chairs, studios) required to deliver a service. When a resource is booked, it is automatically reserved — preventing double-bookings.
+
+**IMPORTANT — Resources in v2 is a completely separate system from Rooms & Equipment:**
+
+| System | Location | Works With |
+|---|---|---|
+| **Resources** | Services → Resources section | v2 Services only |
+| **Rooms & Equipment** | Calendar Settings → Rooms tab / Equipment tab | v1 Service Booking calendars only |
+
+Do NOT use the Rooms or Equipment tabs when building with Services v2. Use Resources instead.
+
+**Critical limitation:** Each service can book only ONE resource per appointment. You cannot attach a room AND separate equipment items — the system picks one resource per booking.
+
+**Practical solution:** Make each resource represent the full physical space including its fixed equipment. Example: "Studio A" = the room + its camera rig + lighting + mics. No need to track equipment separately if it lives permanently in that space.
+
+**How to create Resources:**
+**Path:** Calendars → Calendar Settings → Services → **Resources** section → + New Resource
+
+Fields:
+- **Resource Name** — descriptive name (e.g., "Studio A", "Massage Room A")
+- **Description** — what's included
+- **Select Services** — which services require this resource
+- **Select Locations** — where this resource exists (supports multi-location)
+- **Capacity** — how many simultaneous appointments this resource can handle
+
+**Quantity vs Capacity:**
+- **Quantity** = number of physical units (e.g., 2 identical rooms → create 2 separate resources)
+- **Capacity** = how many people/appointments ONE unit handles at once (e.g., a classroom = 1 room, capacity 20)
+
+Resources can be assigned from either the Resources section OR from inside the service itself.
 
 ---
 
@@ -121,6 +216,7 @@ Categories organize services for easier navigation on the booking page and inter
 **Assigning Services**
 - Select which services this staff member can deliver
 - Only assigned services appear in their availability for booking
+- **Staff-specific pricing:** When assigning a service to a staff member, you can override the service's base price with a price specific to that staff member. Example: Senior engineer charges $500 for a session; junior engineer charges $350 for the same service — same service, different staff, different price shown at booking.
 
 **Weekly Working Hours**
 - Set default availability by day of week
@@ -147,16 +243,18 @@ The system checks from the top down. Date-Specific Hours always win.
 
 ---
 
-## Service Menus
+## Service Menus (v1 Only — NOT for Services v2)
 
-A unified booking page that displays multiple services from individual Service Calendars in one branded interface. Clients browse all available services and book what they need in a single flow.
+> **If you are using Services v2, skip this section entirely. Services v2 has its own public booking page — no Service Menu setup needed.**
 
-**When to use:** A business offers multiple distinct services across different staff or rooms, and you want one booking URL that presents all options.
+Service Menus are a v1 concept. They display multiple v1 Service Booking calendars in one branded booking page. They require a Calendar Group as a prerequisite and only pull from v1 calendars.
 
-**Path:** Calendars → Calendar Settings → Service Menu tab → Create Service Menu
+**Services v2 replacement:** The public booking page auto-generated by v2 (View Booking Page) serves the same purpose — no setup required.
 
-### Prerequisites Before Building a Service Menu
-1. **Service Calendars must exist** — one per service type
+**Path (v1 only):** Calendars → Calendar Settings → Service Menu tab → Create Service Menu
+
+### Prerequisites (v1 only)
+1. **v1 Service Calendars must exist** — one per service type
 2. **Calendar Groups must exist** — Service Calendars must be in a group; only grouped calendars can appear in a Service Menu (see `calendars-groups-menus.md`)
 
 ### How to Set Up a Service Menu
@@ -180,14 +278,15 @@ Service Menu editor → Select Services tab → check the calendars (services) t
 **Step 4 — Arrange and save**
 Drag and drop services to set display order → Save
 
-### Service Menu Limitations
-| Limitation | Details |
-|---|---|
-| Payments | Stripe only — no other processors |
-| Card-on-file | Not supported — cards not saved after booking |
-| In-app payments | Not supported |
-| Coupon codes | Not supported |
-| Full payment flexibility | Use Services v2 for multi-processor support |
+### Service Menu with Services v2
+When the Service Menu is backed by Services v2 (not v1 Service Calendars), the following are all supported:
+- Multiple payment processors (Stripe, Square, Razorpay, Authorize.net, NMI)
+- Card-on-file
+- Coupon codes and promotions
+- Multi-service checkout (customer adds multiple services to cart in one session)
+- Add-ons at checkout
+
+**Note:** The limitations (Stripe only, no coupon codes, no card-on-file) only apply when the Service Menu is backed by v1 Service Booking calendars. With v2 Services, those restrictions are lifted.
 
 ### Service Menu Key Points
 - Multiple Service Menus can be created — use different Calendar Groups for different menus
@@ -197,99 +296,32 @@ Drag and drop services to set display order → Save
 
 ---
 
-## Rooms
+## Rooms & Equipment (v1 Only — NOT for Services v2)
 
-Physical spaces (consultation rooms, treatment chairs, therapy rooms, service bays) linked to Service Calendars. When a Room is linked to a calendar, booking checks Room availability alongside staff availability — preventing double-booking of the physical space.
+> **If you are using Services v2, do not use this section. Use Resources instead (see Step 6 above).**
 
-**Path:** Calendars → Calendar Settings → Rooms tab
+The Rooms tab and Equipment tab in Calendar Settings are for **v1 Service Booking calendars only**. They operate at the calendar level and cannot be used with Services v2.
 
-### Prerequisites
-- Service Calendars must exist before linking a Room
-- Rooms feature must be enabled
+**Path:** Calendars → Calendar Settings → Rooms tab / Equipment tab
 
-### How to Set Up Rooms
+**Rooms** — physical spaces linked to v1 Service Calendars. Prevents double-booking of the space.
+**Equipment** — shared tools with limited quantity linked to v1 Service Calendars.
 
-**Step 1 — Enable Rooms**
-Settings → Calendar Settings → Preferences tab → Account Preference → Services section → toggle **Rooms** ON → Save Preferences
+**Rules:**
+- Rooms and Equipment only link to Service Booking (v1) calendar type
+- Cannot be linked to Collective, Round Robin, Personal, Class/Group, or Event calendars
+- Cannot be used with Services v2 — use Resources instead
 
-**Step 2 — Create a Room**
-Settings → Calendar Settings → Rooms tab → + Create Room
-
-**Step 3 — Configure Room details**
-| Field | Notes |
-|---|---|
-| Name | Clear identifier — e.g., "Consultation Room 2", "Massage Room A" |
-| Description | Notes about intended use |
-| Total Capacity | Max simultaneous appointments in this room |
-| Select Calendar | Which Service Calendars this room is assigned to |
-
-### Room Rules and Constraints
-- **Rooms can ONLY be linked to Service Booking calendars.** They cannot be linked to Round Robin, Personal, Collective, Class/Group, or Event calendars. If you try to use a Collective calendar for a multi-staff service AND need room management — you must choose one or the other. See the note at the bottom of this file.
-- A Room can be assigned to multiple calendars
-- Rooms are **internal only** — clients cannot see or choose rooms; assignment is automatic
-- A Room not linked to any calendar has no effect on booking logic
-- Rooms can be edited or deleted at any time; deleting removes the availability constraint
-- Users are notified when assigned to a Room
-- No official limit on number of Rooms
-
----
-
-## Equipment
-
-Shared physical tools or devices required to deliver a service (massage tables, exam chairs, projectors, cameras, etc.). Equipment availability is tracked alongside staff and rooms — preventing double-booking of shared gear.
-
-**Path:** Calendars → Calendar Settings → Equipment tab
-
-### Prerequisites
-- Service Calendars must exist before linking Equipment
-- Equipment feature must be enabled
-
-### How to Set Up Equipment
-
-**Step 1 — Enable Equipment**
-Settings → Calendar Settings → Preferences tab → Account Preference → Services section → toggle **Equipments** ON → Save Preferences
-
-**Step 2 — Create Equipment**
-Settings → Calendar Settings → Equipment tab → Create Equipment
-
-**Step 3 — Configure Equipment details**
-| Field | Notes |
-|---|---|
-| Equipment Name | Unique identifier — e.g., "Massage Table", "Hyper-Facial Machine" |
-| Description | Brief description of purpose |
-| Total Quantity | Total units available (e.g., 3 massage tables = quantity 3; one entry for all 3) |
-| Out of Service Quantity | Units currently unavailable; GHL subtracts from available pool automatically |
-| Select Calendar | Which Service Calendars this equipment is assigned to |
-
-### Equipment Rules and Constraints
-- **Equipment can ONLY be linked to Service Booking calendars.** Same restriction as Rooms — Collective, Round Robin, Personal, Class/Group, and Event calendars cannot have Equipment linked to them.
-- Equipment can be linked to multiple calendars
-- Out of Service Quantity automatically reduces the bookable pool — no manual calendar blocking needed
-- Deleting equipment that is actively in use removes the availability restriction — may cause double-bookings; review linked calendars before deleting
-- No native reporting for equipment usage — review via calendar view
-- For multiple identical items (e.g., 3 chairs): create ONE entry, set Total Quantity to 3. Do NOT create three separate entries.
-
----
-
-## How Services, Rooms & Equipment Work Together
-
-When a booking comes in, GHL checks all three layers simultaneously:
-
+**How availability works in v1 with Rooms + Equipment:**
 ```
 Booking request
-       ↓
-Is staff available?          → NO → slot blocked
-       ↓ YES
-Is assigned Room available?  → NO → slot blocked
-       ↓ YES
-Is Equipment available?      → NO → slot blocked
-       ↓ YES
-Slot shown to customer → Booking confirmed
+  → Is staff available?     NO → blocked
+  → Is Room available?      NO → blocked
+  → Is Equipment available? NO → blocked
+  → All YES → slot shown
 ```
 
-This triple-check prevents scheduling conflicts across staff, space, and tools without any manual calendar management.
-
-**Workflows:** No direct trigger for Room/Equipment status. Availability constraints operate silently within the booking engine — workflows fire on appointment events as normal.
+For v1 setup details, see `calendars-overview.md`.
 
 ---
 

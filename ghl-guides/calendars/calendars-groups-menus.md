@@ -2,16 +2,22 @@
 
 **Where in GHL:** Calendars → Calendar Settings → Groups tab
 
+> **Calendar Groups are for v1 calendars only (Round Robin, Personal, Service Booking, Class/Group, Collective, Event). They do NOT work with Services v2. Services v2 has its own public booking page — Calendar Groups are not required or compatible.**
+
 ---
 
 ## What Calendar Groups Are
 
-A Calendar Group is a container that holds multiple calendars under one shareable booking link. Instead of sharing 5 separate calendar links, you give clients one Group link that lets them pick from all grouped calendars.
+A Calendar Group is a container that holds multiple **v1 calendars** under one shareable booking link. Instead of sharing 5 separate calendar links, you give clients one Group link that lets them pick from all grouped calendars.
 
 **When to use:**
-- Show multiple service types under one booking page
-- Required before creating a Service Menu (Service Menus pull from Calendar Groups)
-- Organize calendars by team, location, or service category
+- You are building with v1 Service Booking calendars (not Services v2)
+- Show multiple v1 service types under one booking page
+- Required before creating a v1 Service Menu
+- Organize v1 calendars by team, location, or service category
+
+**When NOT to use:**
+- You are building with Services v2 → use the v2 public booking page instead (View Booking Page)
 
 ---
 
@@ -61,11 +67,15 @@ Deactivating hides the group link but preserves all calendars and existing appoi
 |---|---|---|
 | Purpose | Container for calendars | Styled booking UI with service browsing |
 | Booking page | Simple list of calendars | Branded service cards with pricing |
-| Payments | Per-calendar settings | Stripe only |
+| Payments (v1 calendars) | Per-calendar settings | Stripe only |
+| Payments (v2 Services) | Per-service settings | Stripe, Square, Razorpay, Authorize.net, NMI |
+| Coupon codes | No | Yes (v2 only) |
+| Card-on-file | No | Yes (v2 only) |
+| Multi-service cart | No | Yes (v2 only) |
 | Required for Service Menu | Yes — prerequisite | N/A |
 | Multiple per account | Yes | Yes |
 
-**Key rule:** A Service Menu CANNOT be built without first creating a Calendar Group and assigning the relevant Service Calendars to it.
+**Key rule (v1 only):** A v1 Service Menu CANNOT be built without first creating a Calendar Group and assigning the relevant v1 Service Calendars to it. This rule does not apply to Services v2 which has its own booking page.
 
 ---
 
