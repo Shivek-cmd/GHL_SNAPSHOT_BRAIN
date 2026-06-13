@@ -224,6 +224,7 @@ Settings → Calendar Settings → Rooms tab → + Create Room
 | Select Calendar | Which Service Calendars this room is assigned to |
 
 ### Room Rules and Constraints
+- **Rooms can ONLY be linked to Service Booking calendars.** They cannot be linked to Round Robin, Personal, Collective, Class/Group, or Event calendars. If you try to use a Collective calendar for a multi-staff service AND need room management — you must choose one or the other. See the note at the bottom of this file.
 - A Room can be assigned to multiple calendars
 - Rooms are **internal only** — clients cannot see or choose rooms; assignment is automatic
 - A Room not linked to any calendar has no effect on booking logic
@@ -261,6 +262,7 @@ Settings → Calendar Settings → Equipment tab → Create Equipment
 | Select Calendar | Which Service Calendars this equipment is assigned to |
 
 ### Equipment Rules and Constraints
+- **Equipment can ONLY be linked to Service Booking calendars.** Same restriction as Rooms — Collective, Round Robin, Personal, Class/Group, and Event calendars cannot have Equipment linked to them.
 - Equipment can be linked to multiple calendars
 - Out of Service Quantity automatically reduces the bookable pool — no manual calendar blocking needed
 - Deleting equipment that is actively in use removes the availability restriction — may cause double-bookings; review linked calendars before deleting
@@ -288,3 +290,24 @@ Slot shown to customer → Booking confirmed
 This triple-check prevents scheduling conflicts across staff, space, and tools without any manual calendar management.
 
 **Workflows:** No direct trigger for Room/Equipment status. Availability constraints operate silently within the booking engine — workflows fire on appointment events as normal.
+
+---
+
+## Critical Design Note — Rooms, Equipment, and Collective Calendars
+
+**Rooms and Equipment only work with Service Booking calendars.** This creates a real design conflict when a service requires both:
+1. Multiple staff present simultaneously (needs Collective calendar)
+2. Room or Equipment management (needs Service Booking calendar)
+
+GHL cannot do both at once. You must choose:
+
+| Priority | Calendar Type | What You Get | What You Lose |
+|---|---|---|---|
+| Enforce multi-staff requirement | Collective | Both staff must be free for slot to appear | Room/Equipment not managed |
+| Enforce room/equipment constraint | Service Booking | Room and equipment availability tracked | No guarantee both staff are present |
+
+**When Collective without Rooms is safe:**
+If the number of staff required per booking equals or exceeds the number of available rooms, room conflicts are impossible — the staff constraint is the tighter bottleneck. Example: 2 therapists required for a couples massage, 2 massage rooms total → if both therapists are booked, both rooms are effectively claimed anyway. Collective calendar is safe here.
+
+**When you must use Service Booking instead of Collective:**
+If rooms are fewer than possible staff combinations and a double-booked room is a real risk, use a Service Calendar and manage multi-staff availability manually (block one person's calendar, or use a workflow to create a blocked slot).
