@@ -1090,40 +1090,94 @@ Troubleshooting:
 **Wait**
 Holds a contact in the workflow until a time condition is met or a CRM event occurs. Controls when the next steps fire so communications are timely and relevant.
 
-Wait types:
+**Action Name:** Always label the wait step (e.g., "Wait — 3 Days After Sign-Up") so it's identifiable in the builder.
 
-| Wait For | Standard Settings | Advanced Settings |
-|---|---|---|
-| Time Delay | Wait [number] [minutes / hours / days] | Resume on [day of week]; Resume [window] [start–end]; Resume [exact] [time] |
-| Event / Appointment Time | Until [exact time]; After [months + days + hours + minutes]; Before [months + days + hours + minutes] | If already in the past: Next Step / Specific Step / Skip All |
-| Overdue (invoice due date) | Until [exact time]; After / Before [months + days + hours + minutes] | If already in the past: Next Step / Specific Step / Skip All |
-| Condition | Multiple Segments (AND/OR) → Multiple Conditions (AND/OR) on any field | Timeout: ON/OFF — [number] [minutes / hours / days] |
-| Contact Reply | Reply on channel (Email, SMS, etc.) — requires a prior send action on that channel | Timeout: ON/OFF — [number] [minutes / hours / days] |
-| Trigger Link Clicked | Select trigger link | Timeout: ON/OFF — [number] [minutes / hours / days] |
-| Email Events | Select [prior email send action] + [opened / clicked / unsubscribed / complained / bounced] | Timeout: ON/OFF — [number] [minutes / hours / days] |
+---
 
-Key settings:
-- Action Name: label this wait step for easy identification in the builder
-- Resume On: choose specific days to resume (e.g., weekdays only)
-- Resume Between Hours: define a time window for resuming (e.g., 9 AM–5 PM)
-- Advanced Window: if the resume condition fires outside the allowed window (e.g., contact replies on Saturday), holds until the window opens
-- Additional Filters: layer date/time conditions for personalized workflows (e.g., wait until contact's birthday)
+**Wait Type 1 — A Set Period of Time**
+Holds the contact for a fixed duration before continuing.
+Fields:
+- Time period & unit: Seconds | Minutes | Hours | Days
+- Value type: Standard (fixed number) | Dynamic (pull from a custom variable)
+- Advance Window (optional):
+  - Resume On: select specific weekdays (e.g., Mon–Fri only)
+  - Resume Between Hours: define a time window (e.g., 9 AM–5 PM)
+  - Additional date filters: specific day, month, or year
+Note: If the resume condition fires outside the allowed window (e.g., contact hits the wait on Saturday but resume is weekdays only), GHL holds until the window reopens.
 
-Conditions and Segments (Wait for Condition):
-- Conditions are individual rules (e.g., "Tag is VIP", "Custom field equals Yes")
-- Segments are groups of conditions evaluated together with AND/OR logic
-- A contact exits the Wait when any one Segment evaluates as true (Segments use OR between each other)
-- Use Add Condition to build rules, Add Segment to create grouped logic blocks
+---
 
-If already in the past (Event/Appointment/Overdue wait types):
-- Next Step: skips the wait and continues to the next action
-- Specific Step: jumps to a chosen step
-- Skip All: exits all remaining workflow steps
+**Wait Type 2 — A Specific Date and Time**
+Waits until an exact calendar date and time before continuing.
+Fields:
+- Date selection: Standard (manually set) | Dynamic (pulled from a contact date field)
+- Proceed timing: On the date | Before (enter offset) | After (enter offset)
+- If date already passed: Continue next action | Exit automation | Go to specific step | Skip outbound actions until next wait/event
 
-Timeout (CRM Event wait types):
-- Always add a Timeout to Condition, Contact Reply, Trigger Link, and Email Event waits — contacts with no timeout can remain paused indefinitely if the event never occurs
+---
 
-Workflow AI Builder: supports conversational edits for Wait actions — update time delays, window settings, reply conditions, add/remove timeout branches, and convert between wait types without switching to manual config.
+**Wait Type 3 — A Recurring Schedule**
+Repeats on an ongoing cadence — contact waits until the next scheduled occurrence.
+Fields:
+- Frequency: Weekly | Monthly | Yearly
+  - Weekly: select days (Sunday–Saturday) + time
+  - Monthly: specific day of month OR Nth weekday of selected months + time
+  - Yearly: select month and day + time
+- Proceed timing: On date | Before (enter offset) | After (enter offset)
+- Preview: shows the next 5 scheduled occurrences before saving
+Note: Timezone shown on preview reflects the sub-account timezone.
+
+---
+
+**Wait Type 4 — An Upcoming Appointment or Booking**
+Waits relative to a scheduled event on the contact's record.
+Fields:
+- Type: Appointment / Calendar Event | Service Booking | Invoice Due Date
+- Proceed timing: At scheduled time | Before (enter offset in months/days/hours/minutes) | After (enter offset)
+- If already passed: Continue next action | Go to specific step | Exit automation | Skip outbound communications
+
+---
+
+**Wait Type 5 — The Contact to Reply**
+Pauses until the contact sends a reply on the selected channel.
+Fields:
+- Channel: SMS | Email (requires a prior send action on that channel to exist above this step)
+- Timeout (optional): auto-advance after a set duration if no reply received
+Note: When placed directly after a Send Email or Send SMS action, GHL surfaces this option first as the default suggestion.
+
+---
+
+**Wait Type 6 — The Contact to Take an Action**
+Waits until the contact engages with a specific link or email event.
+Fields:
+- Action type: Clicks trigger link | Email events (open / click / bounce / unsubscribed / complained)
+- Step selection: choose which trigger link or email send step to monitor (must exist above this step)
+- Timeout (optional): auto-advance after a set duration if the action doesn't occur
+
+---
+
+**Wait Type 7 — Specific Conditions to be Met**
+Waits until one or more custom logic conditions evaluate as true.
+Fields:
+- Segments: groups of conditions — add as many segments as needed
+- Conditions within each segment: use AND/OR logic on any contact field, tag, custom field, pipeline stage, etc.
+- A contact exits the wait the moment ANY segment evaluates true (segments are OR'd against each other)
+- Timeout (optional): auto-advance after a set duration if no segment is ever satisfied
+Example: Wait until Tag = "VIP" OR Custom Field "Budget" > 5000
+
+---
+
+**Timeout — When to Always Use It**
+Always add a Timeout to Wait Types 5, 6, and 7 (Reply, Action, Condition). Without it, contacts whose event never fires remain paused in the workflow indefinitely.
+
+**If Already in the Past — Options for Types 2, 3, 4**
+- Continue next action: skips the wait and moves forward
+- Go to specific step: jumps to a chosen step number
+- Exit automation: removes the contact from the workflow entirely
+- Skip outbound actions until next wait/event: skips all send actions between here and the next wait step
+
+**Workflow AI Builder**
+Supports conversational edits to any Wait action — change time delays, window settings, reply conditions, add/remove timeout branches, or convert between wait types without manual reconfiguration.
 
 
 **Goal Event**

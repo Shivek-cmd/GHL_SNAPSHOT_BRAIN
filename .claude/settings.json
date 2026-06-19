@@ -4,12 +4,18 @@
       "Read(//d/Watts Company/SnapShots/Dental/**)",
       "Bash(mkdir -p \"d:\\\\Watts Company\\\\GHL_SNAPSHOT_BRAIN\\\\ghl-guides\\\\marketing\\\\social-planner\")",
       "WebFetch(domain:help.gohighlevel.com)",
-      "WebFetch(domain:ideas.gohighlevel.com)"
+      "WebFetch(domain:ideas.gohighlevel.com)",
+      "PowerShell(python --version)",
+      "PowerShell(pip show python-docx 2>$null)",
+      "PowerShell(python \"d:/Watts Company/GHL_SNAPSHOT_BRAIN/snapshots/build_doc.py\")",
+      "Bash(ls \"D:/Watts Company/\")",
+      "Read(//d/Watts Company/**)"
     ],
     "additionalDirectories": [
       "D:\\Watts Company\\SnapShots\\Hair Saloon\\custom-values",
       "d:\\Watts Company\\GHL_SNAPSHOT_BRAIN\\ghl-guides\\marketing",
-      "d:\\Watts Company\\GHL_SNAPSHOT_BRAIN\\ghl-guides"
+      "d:\\Watts Company\\GHL_SNAPSHOT_BRAIN\\ghl-guides",
+      "D:\\Watts Company\\Newsletter"
     ]
   }
 }
