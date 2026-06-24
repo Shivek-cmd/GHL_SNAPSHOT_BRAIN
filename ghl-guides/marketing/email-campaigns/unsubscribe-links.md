@@ -32,7 +32,7 @@ Turn off the default and place the unsubscribe link manually inside the template
 
 **Merge tag:**
 ```
-{{unsubscribe}}
+{{email.unsubscribe_link}}
 ```
 
 **Alternative method (via GHL UI):**
@@ -40,7 +40,7 @@ Inside the email builder → Custom Values → EMAIL → **UNSUBSCRIBE LINK**
 This inserts the same tag without typing it manually — use this if typing the tag directly isn't being detected.
 
 **How it works:**
-When the email is sent, GHL converts `{{unsubscribe}}` into a live clickable hyperlink automatically.
+When the email is sent, GHL converts `{{email.unsubscribe_link}}` into a live clickable hyperlink automatically.
 
 **Works in:** Both HTML and plain text email templates.
 
@@ -49,7 +49,7 @@ When the email is sent, GHL converts `{{unsubscribe}}` into a live clickable hyp
 **Example:**
 ```
 You're receiving this because you're part of the Real with Ritesh community.
-No longer want these emails? {{unsubscribe}}
+No longer want these emails? {{email.unsubscribe_link}}
 ```
 
 ---
@@ -77,11 +77,11 @@ The unsubscribe link **never appears in preview mode or test emails.** This is n
 
 This warning appears in GHL when:
 - The default is turned OFF **and**
-- No `{{unsubscribe}}` tag is detected in the template
+- No `{{email.unsubscribe_link}}` tag is detected in the template
 
 **How to fix:**
 - Option A: Turn the default back ON → Settings → Business Profile → General Tab → Include Unsubscribe Link → ON
-- Option B: Insert `{{unsubscribe}}` into the template — if typing it manually doesn't work, use the GHL UI: Custom Values → EMAIL → UNSUBSCRIBE LINK
+- Option B: Insert `{{email.unsubscribe_link}}` into the template — if typing it manually doesn't work, use the GHL UI: Custom Values → EMAIL → UNSUBSCRIBE LINK
 
 If Option B still shows the warning after saving, use Option A — it is the most reliable method and always clears the warning.
 
@@ -115,7 +115,7 @@ If Option B still shows the warning after saving, use Option A — it is the mos
 
 Settings → Business Profile → General Tab → Include Unsubscribe Link → **ON**
 
-Remove any `{{unsubscribe}}` tag from the template footer. GHL appends the link automatically below your footer content.
+Remove any `{{email.unsubscribe_link}}` tag from the template footer. GHL appends the link automatically below your footer content.
 
 Your footer block:
 ```

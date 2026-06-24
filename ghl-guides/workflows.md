@@ -195,6 +195,77 @@ Filters:
 - In Workflow: select workflow
 
 **Customer Replied**
+Starts a workflow when a contact replies to a message. Filters narrow it to only the replies that matter.
+
+Filters:
+- Contains Phrase: runs only when the reply includes specific words or phrases
+- Exact Match Phrase: runs only when the reply exactly matches the specified text
+- Has Tag: includes only contacts with selected tags
+- Doesn't Have Tag: excludes contacts with selected tags
+- Intent Type: uses NLP to categorize replies — Positive Response | Complaint | Question
+- Replied to Workflow: runs only if the contact replied to a specific workflow's messages (does NOT apply to Email Campaign replies)
+- Reply Channel: runs only when the reply came from a selected channel →
+  - Email
+  - SMS
+  - WhatsApp
+  - All-in-One Chat → Chat Type is: Chat Widget | Live Chat → then select specific widget or configuration
+
+Note: "Replied to Workflow" filter scopes replies to emails sent from a workflow only — it cannot scope replies to Email Campaign sends. For campaign-reply scoping, use Has Tag filter with a pre-send tag strategy.
+
+**Inbound Email**
+Fires when any inbound email is received on your mailboxes — including cold emails from unknown senders not yet in the CRM. Unlike Customer Replied (which fires only when a contact replies to a message you sent), Inbound Email captures all incoming emails.
+
+Prerequisites:
+- Only LC Email dedicated domain or Mailgun dedicated domain support full inbound email capture including cold emails
+- Two-way sync (Gmail/Outlook), shared domains, and other SMTP setups only capture emails from existing contacts — not cold inbound
+
+Handles three types of inbound emails:
+- Cold Emails: new emails from unknown senders not in CRM
+- Warm Emails: new emails from existing contacts
+- Customer Replies: replies from known senders to an existing thread (controlled via Advanced Settings)
+
+Filters:
+
+| Filter | Operators | Notes |
+|--------|-----------|-------|
+| Email Sent To / Mailbox | Equals / Is any of / Contains / Does not contain | Match on To/Mailbox field — e.g. `sales@acme.com` or `@acme.com` |
+| From | Equals / Contains / Does not contain | Matches sender email address, not display name. Case-insensitive. |
+| CC | Equals / Is any of / Contains / Does not contain | Matches CC recipients |
+| Subject | Equals / Contains / Does not contain | Case-insensitive, whitespace trimmed |
+| Body (plain text) | Contains / Does not contain | Matches against plain-text body |
+| Has Attachments | Is true / Is false | Use to trigger attachment-specific workflows |
+| Replied to Workflow | Is / Is not | Filters to replies of a specific workflow's messages only — does NOT apply to Email Campaign replies |
+| Contact Tag | Has tag / Does not have tag | Filter by contact tag |
+
+Advanced Settings:
+- **Trigger Only for New Email Conversations** (toggle, default OFF):
+  - OFF: fires for all inbound emails including replies within existing threads
+  - ON: fires only when a brand new email thread starts — ignores replies in ongoing threads. Use for new lead capture or first-touch autoresponders.
+
+Custom Values available in actions:
+
+| Custom Value | Description |
+|-------------|-------------|
+| `{{inboundEmail.messageId}}` | Unique message ID |
+| `{{inboundEmail.subject}}` | Subject line |
+| `{{inboundEmail.bodyPlain}}` | Plain-text body |
+| `{{inboundEmail.bodyFullPlain}}` | Full plain-text body including entire reply thread |
+| `{{inboundEmail.fromEmail}}` | Sender's email address |
+| `{{inboundEmail.fromName}}` | Sender's display name |
+| `{{inboundEmail.cc}}` | CC recipients |
+
+Key difference from Customer Replied:
+- Customer Replied = contact replies to a message YOU sent
+- Inbound Email = any email arriving in your mailbox, including first-contact cold emails
+
+Note: An email can fire BOTH triggers if both are configured in separate workflows. Use "Track replies in existing threads" setting and filters carefully to avoid overlap.
+
+Common use cases:
+- Lead capture from cold inbound emails: Mailbox = sales@domain.com → Create contact → assign to pipeline
+- Team routing by inbox: If/Else on To/Mailbox → route sales@ to SDR, support@ to ticket workflow
+- First-touch autoresponder: New conversations only (toggle ON) → AI Prompt → auto-reply
+- Subject-driven escalation: Subject Contains "refund" → escalate + tag + create ticket
+- Attachment intake: Has Attachments = True → notify ops team + move pipeline stage
 
 **Conversation AI Trigger**
 
@@ -568,6 +639,18 @@ Filters:
 **Remove Assigned User**
 
 **Edit Conversation**
+Updates the status or properties of the active conversation for the contact.
+Fields:
+- Action Name: label this action
+- Mark as Read: marks the conversation as read in the Conversations inbox — equivalent to a user manually clicking the Mark as Read button
+Key notes:
+- Opening a conversation in GHL does NOT automatically mark it as read — intentional design so messages aren't missed
+- Use this action after a reply action or after a classification step to clear the unread indicator automatically
+- Useful in routing workflows: route → classify → mark read, so the inbox stays clean without manual intervention
+Common use cases:
+- After a workflow sends an automated reply → mark conversation as read so inbox doesn't show false unread indicators
+- After an If/Else routes a message to the correct team → mark read to signal the routing is complete
+- Support ticket acknowledgment: received message → create task → mark conversation as read
 
 **Disable/Enable DND**
 
@@ -580,6 +663,20 @@ Filters:
 **Delete Contact**
 
 **Modify Contact Engagement Score**
+Adds or subtracts points from a contact's engagement score directly within a workflow — used to override or supplement the automatic scoring rules set in Settings → Manage Scoring.
+Fields:
+- Action Name: label this action
+- Operation: Add Points | Subtract Points
+- Points: numeric value to add or subtract
+Key notes:
+- Automatic scoring rules (set in Settings → Manage Scoring) fire based on contact behaviors (email opens, form submissions, etc.) — this action lets you apply score changes based on any workflow trigger, even behaviors not covered by global rules
+- Scores do not decay automatically — use this action with a Scheduler or Wait + recurring check to subtract points for inactivity
+- Score can be used in subsequent If/Else branches to route contacts (e.g., score > 50 → route to high-priority pipeline)
+Common use cases:
+- Add 10 points when a contact clicks a key trigger link
+- Subtract 20 points when a contact misses two appointments
+- Add 50 points when a contact replies to a newsletter
+- Subtract points for long periods of inactivity (scheduled inactivity decay)
 
 **Add/Remove Contact Followers**
 
